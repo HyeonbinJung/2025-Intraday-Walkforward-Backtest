@@ -1,50 +1,93 @@
-# 2024–2025 daily medium-term S&P 500 strategy
+# S-01 · Medium-term trading · 2024–2025
 
-Independent from the existing 2025 intraday backtest. Initial capital **USD 100,000**, 2024-01-02 to 2025-12-31, max **4 calendar months per position**. No hindsight: signals formed after close, trades filled at next open. 6 basis points transaction cost **per side** (1bp commission + 5bp slippage), no leverage, no interest on cash. Hold max 10 names, 12% initial equity allocation/name, 90% gross exposure (60% if SPY below 200-day moving average).
+[← Experiments](../README.md) · [All results](../../docs/RESULTS.md) · [Data caveats](../../docs/DATA_QUALITY.md)
 
-## Crucial honesty about the two backtest modes
+> [!NOTE]
+> **COMPLETE · 502 daily market sessions.** A fresh **$100,000** account is simulated starting January 2024. This is the **standalone two-year** study and must not be confused with a six-year portfolio's 2024–2025 segment.
 
-- **proxy (executed by CI):** Select 100 *highest 63-day average dollar-volume* names from actual preceding-year December S&P 500 members. Rerank from **2023-12** for 2024 and **2024-12** for 2025. This is a liquidity proxy, **NOT the top 100 market caps**. Historical fundamentals/valuations and no-bad-news are NOT verified. The proxy run is a technical study only.
-- **full (needs data):** The required two external, timestamped files must describe the **actual historical top 100 market caps** and point-in-time multiples available at each historical signal date. Without this evidence full mode fails closed. The dataset cannot establish that a 10% fall had literally 'no reason'; actual news/earnings/event investigation remains necessary in either mode.
+## 01 / Research question
 
-## Fixed entry strategy
+How did a simple **historical top-100 dollar-liquidity** S&P 500 basket perform using sell-off reversals or confirmed trends, with a maximum holding period of four months? This is a technical **proxy** study—not a confirmed valuation-based or news-filtered experiment.
 
-1. Sell-off proxy: five-session drop of at least **10%**, seven percentage points worse than SPY, SPY five-session drop smaller than 4%, prior session open gap better than -6%; then RSI14 under 48, positive daily close and >=2% rebound from three-session low, adjusted close >90% 200-day SMA.
-2. Technical trend alternative: price > SMA20 > SMA50 > SMA200, RSI14 in 48–68, within 6% of 63-session high.
-3. Mandatory liquidity/risk filters: adjusted close >$5, trailing 63-day dollar volume >=$20m, annualized trailing 63-day daily volatility <=65%.
-4. Full-mode historical value screen (as-published date at least two calendar days prior to signal): at least two known valuation fields AND at least two meet: positive PE <=30, positive EV/EBITDA <=18, FCF yield >=3.5%; leverage <=3x if provided, revenue growth >=-10% if provided, operating margin positive if provided. Full-mode needs value condition **AND** either sell-off reversal or confirmed trend.
+## 02 / Experiment design
 
-## Fixed exit strategy
+| Property | Setting |
+|:--|:--|
+| Date range | **2024-01-02 → 2025-12-31** |
+| Universe | The **100 most liquid** contemporaneous index members, ranked on the final December session of the previous year |
+| Historic cap top 100? | **No**, this is dollar-volume ranking rather than capitalization ranking |
+| Data | Historical S&P 500 membership and split/dividend-adjusted daily prices |
+| Strategy variants | **Original v1**; **route-aware v1.1 (post-hoc)** |
+| Benchmark | Same-window dividend-adjusted **SPY** |
 
-On previous close, sell following open if -8% vs purchase, -12% from highest close, closing price <97% SMA50 with a negative session, +20% gain AND RSI>72, no longer in S&P 500, or first available session on/after purchase + **4 calendar months**. No trading on explicitly flagged non-trade days. Close-to-next-open stop can execute below the specified loss due to market gaps. Positions still open on 2025-12-31 are marked to market rather than fictional forced fills. No optimizing 2024–25 parameters after results are known.
+## Shared signal and execution rules
 
-## Point-in-time inputs (required for full mode)
+| Component | Fixed rule |
+|:--|:--|
+| Starting account | **$100,000**; no leverage; idle cash earns 0% |
+| Liquidity filter | Last 63 sessions' average dollar turnover **>$20 million** |
+| Stock volatility filter | Trailing 63-session annualized volatility **<=65%** |
+| Price filter | Adjusted close **>$5** |
+| **Sell-off** entry | 5-session drop **<=-10%**, >=7pp weaker than SPY, SPY 5-day change >-4% |
+| **Reversal** confirmation | RSI14 <48, positive close >=2% above 3-day low, adjusted close >90% of SMA200, prior gap >-6% |
+| **Trend** entry | Close > SMA20 > SMA50 > SMA200; RSI14 between 48–68; within 6% of 63-day high |
+| Fill timing | Signal on **previous close**, simulated trade on **next session's open** |
+| Fee and slippage | **6 basis points per side**, modeled |
+| Position sizing | Max **10** holdings; new name <=12% of account equity |
+| Gross exposure | <=90% if SPY above SMA200; otherwise <=60% |
+| Universal exits | -8% from entry, -12% trailing peak close, +20% and RSI14>72, index deletion, or **four calendar months** |
+| Original `v1` exit | Prior close <97% SMA50 and down day causes exit on **both** signal types |
+| Route-aware `v1.1` exit | That SMA50 exit only on trend positions; reversal exits at +6% plus reclaimed SMA20 |
 
-- input/top100_pit.csv: **year,ticker,rank,asof_date**; 100 unique ranks/names per 2024 and 2025, ranking date before corresponding year. Document historic capitalization provenance; the S&P 100 index is not synonymous with the largest 100 by market cap.
-- input/valuation_pit.csv: **ticker,published_at,pe_ttm,ev_ebitda,fcf_yield,net_debt_ebitda,revenue_growth,operating_margin**. Compute with historic share counts/filings, not 2026 values. Unavailable data must stay missing. Sector comparison and special bank valuation conventions remain future refinements.
+> [!CAUTION]
+> The numerical stop levels are **previous-close triggers**, not guarantees of the next-open execution price. The “unexplained 10% decline” condition cannot be established from prices alone, and executed proxy runs did **not** use timestamped P/E / EV/EBITDA / FCF multiples or news verification. Route-aware exits were defined after analyzing 2024–2025; they are post-hoc.
 
-## Usage
 
-From repository root, install the dependencies from experiments/medium_term_2024_2025/requirements.txt. Then execute:
+## 03 / Confirmed results
 
-    python experiments/medium_term_2024_2025/backtest.py --mode proxy
+| Outcome | Original / v1 | Route-aware / v1.1 |
+|:--|--:|--:|
+| Ending NAV | **$117,476.38** | **$117,083.67** |
+| Cumulative return | +17.48% | +17.08% |
+| CAGR | +8.40% | +8.22% |
+| Maximum drawdown | -14.19% | -14.71% |
+| Sharpe (0% risk-free) | 0.860 | 0.830 |
+| Completed round trips | 104 | 100 |
+| Realized win rate | 37.50% | 38.00% |
+| SPY matched return | **+47.99%** | **+47.99%** |
 
-For fully sourced market-cap/valuation data use:
+The earlier baseline outperformed the edited variant slightly **within this very sample**, and both underperformed SPY by more than 30 percentage points. These findings are descriptive, not a claim of statistical significance.
 
-    python experiments/medium_term_2024_2025/backtest.py --mode full --top100 PATH --fundamentals PATH --out PATH
+**[Open results directory →](results/README.md)** · [Original run report](results/proxy/README.md) · [Route-aware run report](results/proxy_route_aware/README.md)
 
-CI workflow: .github/workflows/medium-term-2024-2025.yml. It runs **real 2024–25 daily adjusted market prices** and commits results/proxy/{summary.json,summary.md,equity_curve.csv,trades.csv,monthly.csv} if successful. No fabricated performance if run fails.
+## 04 / Interpretation & detailed findings
 
-## Data and limitations
+The original 2024–2025 simulation recorded **114 buys**, **106 trend entries** and only **8 reversal entries**. The strategy's return therefore primarily reflects the technical-trend sleeve. Applying the trend break exit to the reversal sleeve created a structural mismatch; the revised route-aware rule attempted to address it **after observing historical failures**.
 
-Prices and time-stamped S&P 500 membership: [Johnbrick123/sp500-data](https://github.com/Johnbrick123/sp500-data), release named data. The source author describes corporate-action corrections, a post-2025 data vintage, and verification caveats. Price fields from mixed vendors are turned into synthetic split/dividend-adjusted opens using daily adjusted close/raw close ratio. Data downloaded ~236MB initially. Historical trading status from no_trade_days.csv is blocked. Adjusted total return and synthetic share-unit calculations are an approximation; validate against independent split/dividend sources. Tax, market impact beyond 5bp, delisting settlements, share availability, earnings release blackout, full news causality and volatility/beta matching are not modeled. SPY is a simple buy/hold benchmark with no modeled commissions. Proxy performance cannot be reported as the full requested fundamental strategy.
+- [Original realized trade diagnostics](RESULTS_ANALYSIS.md)
+- [Exact rationale, version history and v1.1 comparison](REVISION_V1_1.md)
 
-## Executed 2024-2025 runs
+## 05 / Reproduction
 
-| Version | Final marked NAV | 2024 | 2025 | Full-period | Status |
-|---|---:|---:|---:|---:|---|
-| Initial v1 price proxy | $117,476.38 | +19.805% | -1.944% | +17.476% | Successful, pre-revision |
-| v1.1 route-aware price proxy | $117,083.67 | +20.028% | -2.453% | +17.084% | Successful, **POST-HOC**, not held-out |
-| SPY benchmark | — | — | — | +47.990% | Buy and hold over matched interval |
+```bash
+python -m pip install -r experiments/medium_term_2024_2025/requirements.txt
 
-v1 results: results/proxy/summary.md. Route-aware results: results/proxy_route_aware/summary.md. Exit diagnostics: RESULTS_ANALYSIS.md; revision caveats: REVISION_V1_1.md. The repository's current backtest.py and workflow execute v1.1 by default; the v1 code remains retrievable at its earlier git commit. Neither price proxy is a completed historical market-cap top-100 / valuation / verified-no-news backtest.
+# Current backtest.py is v1.1 / route-aware.
+python experiments/medium_term_2024_2025/backtest.py --mode proxy --out /tmp/medium_2024_2025_route
+```
+
+> [!IMPORTANT]
+> The **original v1** result comes from the earlier source revision [**1c8fa41**](https://github.com/HyeonbinJung/2025-Intraday-Walkforward-Backtest/blob/1c8fa41cca72b2bfa35b155e7e6a9529f100e460/experiments/medium_term_2024_2025/backtest.py). The current script should **not** be cited as the exact original-v1 replay engine. Do not overwrite published `results/` paths when reproducing.
+
+For strict research with **historical capitalization top 100 and valuation gates**, the source accepts `--mode full`, requiring authentic dated `input/top100_pit.csv` and `input/valuation_pit.csv`. These are unpopulated templates; **no valid full fundamental result is currently reported**.
+
+## 06 / Evidence & limitations
+
+| Evidence | Link |
+|:--|:--|
+| Original summary JSON | [2024–2025 / proxy](results/proxy/summary.json) |
+| Route-aware summary JSON | [2024–2025 / route-aware](results/proxy_route_aware/summary.json) |
+| Trade ledgers | [Original](results/proxy/trades.csv) / [Revised](results/proxy_route_aware/trades.csv) |
+| Published workflow | [GitHub Actions YAML](../../.github/workflows/medium-term-2024-2025.yml) |
+
+Historical prices may be revised after publication, full historical valuation and negative-news explanations were not provided, and fixed-next-open fills are simplified. [Detailed integrity register](../../docs/DATA_QUALITY.md).

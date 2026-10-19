@@ -1,38 +1,98 @@
-# 2020–2025 S&P 500 large-cap medium-term rules backtest
+# S-02 · Medium-term trading · 2020–2025 (100 liquid names)
 
-**Separate six-year experiment** (2020-01-02–2025-12-31), with all older 2024–2025 results retained. Starts with **$100,000**, no leverage, cash earns 0%, and fees/slippage total **6 bp per trade side**. Uses at least 2018-2019 historical data as indicator warm-up.
+[← Experiments](../README.md) · [All results](../../docs/RESULTS.md) · [Data caveats](../../docs/DATA_QUALITY.md)
 
-## Crucial scope limitation
+> [!NOTE]
+> **COMPLETE · 1,508 trading sessions.** A continuously simulated $100,000 account runs for **six full calendar years**. Positions and cash **carry forward** each year; the 2024–2025 subperiod is not the separate S-01 fresh-start account.
 
-The automatic **proxy** variant uses the **100 S&P 500 constituents with highest average daily dollar trading volume over the previous 63 sessions, as measured on the previous year's last trading day**. This is **not** the exact 100 highest market-cap names. Neither historical news explaining 10% drops nor historical P/E / EV-EBITDA / FCF valuation is verified in proxy mode. It is not the requested *full value-screened top-100* investment strategy. `--mode full` fails without separately sourced and time-stamped historical rank and valuation CSV files. A price-only screen cannot prove a drawdown was "without reason".
+## 01 / Research question
 
-## Same entry and risk rules as before
+Does extending the same rules-based swing framework back through **2020–2025** provide more credible evidence of its performance across different market regimes? **This is still technical price-only proxy research.**
 
-- Daily signal after previous session's close; order at next session's **synthetically total-return-adjusted open**.
-- **Sell-off reversal:** five-session return <= -10%, at least 7pp worse than SPY, SPY five-day performance > -4%, opening gap better than -6%; require positive day >=2% off prior 3-session low, RSI(14) <48 and price >90% SMA200.
-- **Trend:** price > SMA20 > SMA50 > SMA200, RSI14 48–68 and price within 6% of its 63-session high.
-- Trade only active S&P 500 index constituents in that year's predetermined basket, price >$5, 63-session average daily dollar volume >$20m, 63-day annualized volatility <65%.
-- Max 10 stocks, max 12% position equity when entered; portfolio 90% invested if SPY above 200-day SMA, otherwise 60%.
-- All routes: -8% stop (triggered by close), -12% drawdown from peak close (triggered by close), +20% with RSI>72, index deletion or **first session at/after 4 calendar months** exit. Gaps can cause loss beyond thresholds.
-- Two variants held separately:
-  - **original:** below 97% of SMA50 AND negative daily return -> exit next open for *both* trend and dip-reversal entries.
-  - **route_aware:** same SMA50 exit for trend only; dip-reversal positions exit on +6% gain and SMA20 reclaim. This is a **post-hoc** repair chosen after inspecting 2024–2025 outcomes; do not present the 2020–2025 total as an out-of-sample validation.
+## 02 / Experiment design
 
-## Additional data integrity
+| Property | Setting |
+|:--|:--|
+| Window | **2020-01-02 → 2025-12-31** |
+| Universe | Prior-year-end **top 100 by trailing 63-session dollar trading volume** among historic S&P 500 members |
+| 100 largest market caps? | **No**; size and dollar-volume rank are not the same thing |
+| Annual candidate refresh | Re-ranked at each prior December session |
+| Data warm-up | 2018–2019 pricing history |
+| Exits | Original v1 and route-aware v1.1 (post-hoc) |
+| Matched benchmark | SPY total-return adjusted prices |
 
-Point-in-time S&P constituents and adjusted OHLCV data from [Johnbrick123/sp500-data](https://github.com/Johnbrick123/sp500-data) release `data`; exclude known no-trade dates and recycled tickers. The series is adjusted using an ex-post data vintage (2026), so corporate-action revisions may not be strictly point-in-time.
+## Shared signal and execution rules
 
-**Unverifiable acquisition payout exception:** when an existing holding is deleted from the S&P 500 universe with no next tradable open, cash is *synthetically settled at the last known adjusted close*, explicitly logged as `SYNTHETIC_SETTLEMENT / UNVERIFIED_CORPORATE_ACTION_PAYOUT`. This avoids carrying stale holdings (prior experiment carried PXD) but is **not executable and not proven identical to actual cash/stock merger consideration**. Result is accounting-proxy P&L; settlement count and details are recorded in summary.json. If such settlements occur, results should not be treated as proven investable execution. No taxes, real broker fills, borrow constraints, or sector exposure constraints modeled.
+| Component | Fixed rule |
+|:--|:--|
+| Starting account | **$100,000**; no leverage; idle cash earns 0% |
+| Liquidity filter | Last 63 sessions' average dollar turnover **>$20 million** |
+| Stock volatility filter | Trailing 63-session annualized volatility **<=65%** |
+| Price filter | Adjusted close **>$5** |
+| **Sell-off** entry | 5-session drop **<=-10%**, >=7pp weaker than SPY, SPY 5-day change >-4% |
+| **Reversal** confirmation | RSI14 <48, positive close >=2% above 3-day low, adjusted close >90% of SMA200, prior gap >-6% |
+| **Trend** entry | Close > SMA20 > SMA50 > SMA200; RSI14 between 48–68; within 6% of 63-day high |
+| Fill timing | Signal on **previous close**, simulated trade on **next session's open** |
+| Fee and slippage | **6 basis points per side**, modeled |
+| Position sizing | Max **10** holdings; new name <=12% of account equity |
+| Gross exposure | <=90% if SPY above SMA200; otherwise <=60% |
+| Universal exits | -8% from entry, -12% trailing peak close, +20% and RSI14>72, index deletion, or **four calendar months** |
+| Original `v1` exit | Prior close <97% SMA50 and down day causes exit on **both** signal types |
+| Route-aware `v1.1` exit | That SMA50 exit only on trend positions; reversal exits at +6% plus reclaimed SMA20 |
 
-Full mode CSV inputs:
-- `input/top100_pit.csv` fields `year,ticker,rank,asof_date`, 100 rank rows/year for **every year 2020–2025**, dates before corresponding year.
-- `input/valuation_pit.csv` fields `ticker,published_at,pe_ttm,ev_ebitda,fcf_yield,net_debt_ebitda,revenue_growth,operating_margin` (as-known with two-day publication delay).
-- Even with both, proving a decline had no contemporaneous economic explanation requires a separate point-in-time news/filings feed.
+> [!CAUTION]
+> The numerical stop levels are **previous-close triggers**, not guarantees of the next-open execution price. The “unexplained 10% decline” condition cannot be established from prices alone, and executed proxy runs did **not** use timestamped P/E / EV/EBITDA / FCF multiples or news verification. Route-aware exits were defined after analyzing 2024–2025; they are post-hoc.
 
-## Execute locally
 
-    python -m pip install -r experiments/medium_term_2020_2025/requirements.txt
-    python experiments/medium_term_2020_2025/backtest.py --mode proxy --exit-mode original --out experiments/medium_term_2020_2025/results/original
-    python experiments/medium_term_2020_2025/backtest.py --mode proxy --exit-mode route_aware --out experiments/medium_term_2020_2025/results/route_aware
+## 03 / Six-year results
 
-Both versions are executed via `.github/workflows/medium-term-2020-2025.yml`. Workflow asserts **all six years**, 100-stock annual universe, and real daily price history before committing outputs to their own directories. Results contain `summary.json`, `summary.md`, `equity_curve.csv`, `trades.csv`, `monthly.csv`. Versions are held fixed; no retrospective tuning to maximize 2020–2025 performance.
+| Metric | Original v1 | Route-aware v1.1 |
+|:--|--:|--:|
+| Ending NAV | **$124,373.08** | **$124,008.34** |
+| Cumulative return | +24.37% | +24.01% |
+| CAGR | +3.71% | +3.65% |
+| Max drawdown | -23.54% | -24.30% |
+| Sharpe (0% risk-free) | 0.353 | 0.347 |
+| Realized win rate | 36.18% | 36.12% |
+| Completed trades | 340 | 335 |
+| **SPY cumulative return** | **+130.14%** | **+130.14%** |
+
+### Calendar-year returns
+
+| Year | Original v1 | Route-aware v1.1 | SPY |
+|:--|--:|--:|--:|
+| 2020 | +6.08% | +6.86% | +18.37% |
+| 2021 | +22.03% | +22.03% | +28.74% |
+| 2022 | -11.78% | -12.39% | -18.17% |
+| 2023 | +7.16% | +5.12% | +26.19% |
+| 2024 | +8.47% | +11.26% | +24.89% |
+| 2025 | -6.31% | -7.19% | +17.72% |
+
+**[Open results index →](results/README.md)** · [Original results](results/original/README.md) · [Route-aware results](results/route_aware/README.md)
+
+## 04 / Main findings
+
+In the original six-year run, **339 out of 350 purchases were trend entries**, with **only 11 reversal entries**. The system thus does not substantively measure the requested "buy an unexplained 10% drop at attractive multiples" thesis. The strategy protected more capital than SPY in some down markets, but the six-year portfolio **underperformed SPY significantly**.
+
+[Detailed entry/exit attribution](RESULTS_ANALYSIS.md) · [Cross-universe comparison](../medium_term_2020_2025_sp500/RESULTS_COMPARISON.md)
+
+## 05 / Reproduce
+
+```bash
+python -m pip install -r experiments/medium_term_2020_2025/requirements.txt
+python experiments/medium_term_2020_2025/backtest.py --mode proxy --exit-mode original --out /tmp/100_original
+python experiments/medium_term_2020_2025/backtest.py --mode proxy --exit-mode route_aware --out /tmp/100_route
+```
+
+The historical **PIT market-cap** and as-filed valuation mode exists as optional code but requires populated and validated `input/top100_pit.csv` and `input/valuation_pit.csv`. These inputs are not provided as verified historical records. [Run workflow](../../.github/workflows/medium-term-2020-2025.yml).
+
+## 06 / Evidence & limitations
+
+| Record | Location |
+|:--|:--|
+| Original machine summary | [summary.json](results/original/summary.json) |
+| Route-aware machine summary | [summary.json](results/route_aware/summary.json) |
+| Orders | [Original](results/original/trades.csv) / [Route-aware](results/route_aware/trades.csv) |
+| Daily account curves | [Original](results/original/equity_curve.csv) / [Route-aware](results/route_aware/equity_curve.csv) |
+
+**Two synthetic non-executable acquisition exit assumptions** (TIF and PXD) appear in each six-year portfolio. These were valued at prior adjusted price, not verified historical merger cash/stock settlement. This and ex-post price-vintage issues matter for actual deployability. [Read data quality limitations](../../docs/DATA_QUALITY.md).
