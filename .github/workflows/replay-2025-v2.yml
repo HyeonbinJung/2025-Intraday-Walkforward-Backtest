@@ -1,0 +1,77 @@
+name: 2025H1 v2 low-turnover replay
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'experiments/v2_2025H1/**'
+      - 'tests/**'
+      - 'requirements.txt'
+      - '.github/workflows/replay-2025-v2.yml'
+permissions:
+  contents: write
+concurrency:
+  group: replay-2025-v2
+  cancel-in-progress: false
+jobs:
+  replay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install packages
+        run: python -m pip install -r requirements.txt
+      - name: Validate Python source
+        run: |
+          python -m compileall -q experiments/v2_2025H1
+          python -m unittest discover -s tests -v
+      - name: Resume chronological fortnightly batches Jan-Jun 2025
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          python - <<'PY' > /tmp/2025h1_batch_dates.txt
+          from datetime import date, timedelta
+          day, last = date(2025, 1, 1), date(2025, 6, 30)
+          while day <= last:
+              end = min(day + timedelta(days=13), last)
+              print(day.isoformat(), end.isoformat())
+              day = end + timedelta(days=1)
+          PY
+          while read -r BEGIN END; do
+            echo "========== 2025H1 batch $BEGIN ... $END =========="
+            python -u experiments/v2_2025H1/batch_replay_v2.py --batch-start "$BEGIN" --batch-end "$END" --out results/2025H1_v2 2>&1 | tee -a /tmp/2025h1-v2-replay-log.txt
+            git add results/2025H1_v2
+            if ! git diff --cached --quiet; then
+              git commit -m "Replay v2 2025H1 minutes $BEGIN through $END with causal rules"
+              git fetch origin main
+              git rebase origin/main
+              git push
+            fi
+          done < /tmp/2025h1_batch_dates.txt
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d = json.loads(Path("results/2025H1_v2/summary.json").read_text())
+          assert d["status"] == "COMPLETE", d
+          assert d["last_batch_end"] == "2025-06-30"
+          assert d["sessions_completed"] == d["sessions_expected"]
+          assert d["minute_rule_checks"] >= 40000
+          assert d["batch_count"] >= 13
+          print("VERIFIED 2025H1 ENDING EQUITY USD", d["ending_equity_usd"])
+          PY
+      - name: Upload log and latest summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: h1-v2-minute-replay-log
+          path: |
+            /tmp/2025h1-v2-replay-log.txt
+            results/2025H1_v2/summary.json
+          retention-days: 30
