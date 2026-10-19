@@ -50,6 +50,8 @@ jobs:
             git add results/2025H1
             if ! git diff --cached --quiet; then
               git commit -m "Replay 2025H1 minutes $BEGIN through $END with causal rules"
+              git fetch origin main
+              git rebase origin/main
               git push
             fi
           done < /tmp/2025h1_batch_dates.txt
