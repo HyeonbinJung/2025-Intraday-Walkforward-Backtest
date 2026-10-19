@@ -121,37 +121,49 @@ class Engine:
                             "realized_pnl": round(realized, 4),
                             "cash_after": round(self.cash, 2)})
 
-    def rank(self, history, timestamp):
-        ranked = []
-        for ticker, h in history.items():
-            if len(h) < 21 or self.cooldown.get(ticker, 0) > self.minute_n:
+    def score_trailing_bars(self, frame):
+        """Vectorized trailing-only features. Precomputation never uses future rows."""
+        f = frame.sort_values(["ticker", "timestamp"]).copy()
+        g = f.groupby("ticker", sort=False)
+        prior20 = g["timestamp"].shift(20)
+        close5 = g["close"].shift(5)
+        close20 = g["close"].shift(20)
+        f["gain5"] = f["close"] / close5 - 1
+        f["gain20"] = f["close"] / close20 - 1
+        v5 = g["volume"].transform(lambda x: x.rolling(5).mean())
+        v_before = g["volume"].transform(lambda x: x.shift(5).rolling(15).mean())
+        f["rvol"] = v5 / v_before.clip(lower=1)
+        dollar = f["close"] * f["volume"]
+        f["avg_dollar_volume"] = dollar.groupby(f["ticker"]).transform(
+            lambda x: x.rolling(20).mean())
+        returns = np.log(f["close"]).groupby(f["ticker"]).diff()
+        f["volatility"] = returns.groupby(f["ticker"]).transform(
+            lambda x: x.rolling(10).std(ddof=0))
+        f["score"] = 4 * f["gain5"] + 2 * f["gain20"].clip(lower=0) + f["volatility"] + 0.002 * np.log1p(f["rvol"])
+        f["eligible"] = ((f["timestamp"] - prior20).dt.total_seconds() == 1200) & (
+            f["close"].between(2, 1000)) & (f["rvol"] >= 1.15) & (f["avg_dollar_volume"] >= 200000)
+        return f.sort_values(["timestamp", "ticker"])
+
+    def rank(self, group):
+        eligible = group[group["eligible"] & (group["gain5"] > self.threshold)]
+        if eligible.empty:
+            return []
+        selected = []
+        for item in eligible.nlargest(30, "score").itertuples():
+            if self.cooldown.get(item.ticker, 0) > self.minute_n:
                 continue
-            if (timestamp - h[0][0]).total_seconds() != 1200:
-                continue
-            c = np.array([z[1] for z in h])
-            v = np.array([z[2] for z in h])
-            if np.min(c) <= 0 or not 2 <= c[-1] <= 1000:
-                continue
-            gain5 = c[-1] / c[-6] - 1
-            gain20 = c[-1] / c[0] - 1
-            rel_vol = np.mean(v[-5:]) / max(np.mean(v[-20:-5]), 1)
-            avg_dv = np.mean(c[-20:] * v[-20:])
-            if gain5 < self.threshold or rel_vol < 1.15 or avg_dv < 200000:
-                continue
-            volatility = np.std(np.diff(np.log(c[-11:])))
-            score = 4 * gain5 + 2 * max(0, gain20) + volatility + 0.002 * np.log1p(rel_vol)
-            ranked.append((score, ticker))
-        ranked.sort(reverse=True)
-        return [sym for _, sym in ranked[:5]]
+            selected.append(item.ticker)
+            if len(selected) == 5:
+                break
+        return selected
 
     def session(self, frame, open_time, close_time, date):
         start = self.equity()
         prior_count = len(self.trades)
-        history = defaultdict(lambda: deque(maxlen=21))
         # A decision at 15:58 close exits at 15:59 open, not hindsight 15:59 close.
         flatten_signal_time = close_time - pd.Timedelta(minutes=2)
         observed = 0
-        frame = frame.drop_duplicates(["timestamp", "ticker"], keep="last")
+        frame = self.score_trailing_bars(frame.drop_duplicates(["timestamp", "ticker"], keep="last"))
         for timestamp, group in frame.groupby("timestamp", sort=True):
             timestamp = pd.Timestamp(timestamp)
             when = timestamp.isoformat()
@@ -174,14 +186,13 @@ class Engine:
             for symbol, b in current.items():
                 self.last_price[symbol] = float(b.close)
                 self.previous_completed_volume[symbol] = float(b.volume)
-                history[symbol].append((timestamp, float(b.close), float(b.volume)))
                 if symbol in self.positions:
                     self.positions[symbol]["peak"] = max(self.positions[symbol]["peak"],
                                                           float(b.close))
             if timestamp >= flatten_signal_time:
                 next_orders = {sym: 0.0 for sym in self.positions}
             else:
-                selected = self.rank(history, timestamp)
+                selected = self.rank(group)
                 next_orders = {sym: 0.0 for sym in self.positions if sym not in selected}
                 equity = self.equity()
                 for sym in selected:
