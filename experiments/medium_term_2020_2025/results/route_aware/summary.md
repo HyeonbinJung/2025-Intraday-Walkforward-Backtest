@@ -1,6 +1,6 @@
 # 2020-2025 results: proxy / route_aware
 
-> Technical/price exploratory POST-HOC v1.1 test; NOT exact cap-top100, no valuation/news verification
+> Historical liquidity-top100 PROXY (NOT market-cap top100); valuation/news unverified; 2 possible non-executable corporate settlements
 
 | Metric | Value |
 |---|---:|
