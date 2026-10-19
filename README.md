@@ -1,45 +1,52 @@
-# 2025 One-Minute Intraday Walk-Forward Backtest
+# 2025 January–June intraday trading replay — $100,000 virtual capital
 
-**Initial virtual capital: $100,000**. Replay window: **Jan 1–Dec 31, 2025**. Long-only US equities, up to 5 dynamic momentum/relative-volume candidates.
+**Period:** January 1 to June 30, 2025, NYSE regular-market sessions only. **Batch size:** consecutive 14-calendar-day windows (about 10 trading sessions). **Simulation cadence:** new market assessment and risk-rule evaluation after every completed 1-minute OHLCV candle. **Position target reevaluation every minute**; an actual order executes only if the signals, risk limits and available data justify it.
 
-## Run status
+## Status and final balance
 
-**Results are unverified until results/2025/summary.json says COMPLETE.** Do not substitute a hypothetical return for actual computed results.
+Current auditable result: `results/2025H1/summary.json`. A final June balance is reported **only if** that file has `"status": "COMPLETE"` and its sessions completed match the NYSE calendar count through June 30. Earlier batch files deliberately say `PARTIAL`. The earlier full-year attempts have been superseded, and their reported January figures are not part of the definitive Jan–Jun result.
 
-See the GitHub Actions tab for **2025 one-minute historical replay**. A push to src/backtest.py triggers the historical run. If it fails, inspect the attached log artifact. You can trigger it again via workflow_dispatch.
+**Actions workflow:** [2025H1 replay](../../actions/workflows/replay-2025.yml). Runs independently on the GitHub-hosted computer and commits each completed two-week historical batch to the public repository before starting the next. After interruptions, it resumes with the cash, positions and rules from the last committed batch, rather than resetting to $100,000.
 
-## Causal execution model
+## Minute-by-minute execution
 
-- NYSE session calendar, holidays and shortened sessions respected; source bars restricted to regular market hours.
-- Signal from a fully finished 1-minute bar cannot fill until the next minute's open. No future gain or future volatility is used for picking the five stocks.
-- Momentum (5/20 minutes), recent volatility and relative trading volume screen candidates at each minute.
-- Every minute evaluates orders, trailing stops and risk rules; every realized losing position exit tightens momentum threshold and reduces allocation (without peeking into what will happen next).
-- Each trade has next-bar-open price plus **5 bp estimated adverse slippage per side**, **$0.005 per share commission**, a maximum participation of **1% of minute bar volume**.
-- Portfolio + rule snapshots every 10 minutes; every fill and loss-rule transition logged individually; equity and trade counts saved for every real NYSE session.
-- No fake fills for missing minute candles. If last-minute exits are unfilled, positions remain on the balance sheet, showing overnight exposure rather than inventing executions.
+1. Use only OHLCV bars with timestamps already fully completed by the decision minute; rolling features are backward-looking.
+2. Each minute rank up to five eligible momentum + relative-volume equities from that minute's available universe.
+3. Reevaluate stop/exit/entry and target positions every minute; fill **no earlier than the next minute's opening print**. Initial minute cannot fill using its own as-yet-unobserved volume.
+4. Buy/sell size capped by **1% of the PREVIOUS completed minute's recorded volume**, estimated adverse slippage **5 bps per side** plus **$0.005 per share** fees. No leverage, shorts or borrowing.
+5. Every completed minute evaluate defensive rule conditions and record current risk/threshold, holdings count and account value in `rules_1min.csv`. Parameters change **only when triggered** by realized losses or profitable exits, rather than magically changing on every clock tick. Losing sell fills reduce future position budget, increase momentum hurdle and impose symbol cooldowns.
+6. Save a position/equity and rule snapshot every 10 minutes, every transaction, rule-change event, daily equity, observed-minute coverage, and one JSON batch summary for **each** 14-day chunk.
+7. At each completed batch checkpoint, persist cash, holdings, last available marks, minute counter, risk fraction, momentum threshold, loss streak, costs and cooldowns, then commit the auditable outputs.
 
-## Data provenance
+## Directory structure
 
-Source: https://huggingface.co/datasets/mito0o852/OHLCV-1m. Monthly Parquet files for 2025, described by publisher as originally sourced from Finnhub. Data is downloaded to the ephemeral workflow runner; NOT committed. Check licensing before redistribution.
+- `src/backtest.py` — historical trading engine, minute-by-minute rule and portfolio decisions.
+- `src/batch_replay.py` — Jan–Jun time windows, explicit resume logic, no reinitialization, calendar validation.
+- `tests/test_replay.py` — synthetic causality and checkpoint continuity tests.
+- `results/2025H1/state.json` — position/rule checkpoint for restart **after the first successful batch**.
+- `results/2025H1/summary.json` — cumulative results, partial/final status and true June 30 balance.
+- `results/2025H1/batches/YYYY-MM-DD_to_YYYY-MM-DD/`:
+  - `rules_1min.csv` — each minute's actual evaluated rule state.
+  - `equity_10min.csv`, `rules_10min.csv` — snapshots.
+  - `trades.csv` — every execution, fees, actual execution assumptions.
+  - `rule_events.csv` — all stop/risk-rule transitions.
+  - `daily_equity.csv` and `data_coverage.csv` — daily equity and data integrity.
+  - `batch_summary.json` — cumulative batch-to-batch account balance.
 
-Limitations: source universe may not faithfully contain all delisted IPO/meme/low-liquidity stocks; pre-2025/split adjustments may embed hindsight corporate actions; 1-minute bar open + fixed slippage does not guarantee actual fill; and 1% printed-volume cap does not model market impact completely. Thus this is a historical research simulation, not a genuine real-time strategy track record. Selection is top five **within observed dataset candidates**, NOT independently verified as the entire national market's five biggest gainers.
+## Reproduce
 
-## Local execution
+```bash
+python -m pip install -r requirements.txt
+python -m unittest discover -s tests -v
+python src/batch_replay.py --batch-start 2025-01-01 --batch-end 2025-01-14 --out results/2025H1
+python src/batch_replay.py --batch-start 2025-01-15 --batch-end 2025-01-28 --out results/2025H1
+# Continue contiguous 14-calendar-day batches until 2025-06-30.
+```
 
-Install dependencies from requirements.txt, then run:
+Or run [the GitHub Actions workflow](../../actions/workflows/replay-2025.yml), which executes all batches in chronological order and commits after each successful batch.
 
-    python src/backtest.py --out results/2025
+## Source, reproducibility and limitations
 
-Or provide downloaded 2025 monthly Parquet files with --local-dir PATH. Never start with less than the complete 12 months if claiming full-year final performance.
+Actual recorded 1-minute stock bars are downloaded at runtime from [mito0o852/OHLCV-1m](https://huggingface.co/datasets/mito0o852/OHLCV-1m), a third-party US-stock data collection, reportedly originating from Finnhub. Raw data is not republished here. Monthly source files could change, and corporate-action-adjusted prices, missing delisted tickers, incomplete trading universe, and historical ticker renames can introduce **survivorship or ex-post adjustment bias** even in an otherwise causal replay. A 1-minute candle cannot reproduce order-book market impact. Reported virtual P&L is not verified achievable brokerage performance. Snapshot timestamps represent **simulation time**, not backdated Git commits.
 
-## Outputs
-
-- results/2025/summary.json — completion flag, final equity, net return, costs, trades, drawdown.
-- results/2025/daily_equity.csv — daily account balances and realized activity.
-- results/2025/equity_10min.csv — 10-minute equity, cash and position snapshots.
-- results/2025/trades.csv — each simulated buy/sell fill.
-- results/2025/rules_10min.csv — 10-minute active rule state.
-- results/2025/rule_events.csv — each risk-rule change, its time and trigger.
-- results/2025/data_coverage.csv — minutes/bar count per trading day.
-
-Historical timestamps are embedded in records, not falsified as earlier GitHub commit dates.
+If raw data cannot be downloaded, coverage is incomplete, or replay/commit fails, the workflow stops with no fabricated year-end/June-end P&L. Only completed, successfully saved batches are treated as valid.
