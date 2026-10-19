@@ -1,0 +1,29 @@
+{
+  "status": "PARTIAL",
+  "source": "mito0o852/OHLCV-1m",
+  "start": "2025-01-01",
+  "requested_end": "2025-06-30",
+  "last_batch_end": "2025-01-14",
+  "initial_capital_usd": 100000.0,
+  "ending_equity_usd": null,
+  "current_checkpoint_equity_usd": 92336.71,
+  "profit_loss_usd": null,
+  "return_pct": null,
+  "max_daily_drawdown_pct": -7.6633,
+  "sessions_completed": 8,
+  "sessions_expected": 122,
+  "fills": 3165,
+  "minute_rule_checks": 3120,
+  "losing_sell_fills": 935,
+  "winning_sell_fills": 889,
+  "estimated_trading_costs_usd": 7958.25,
+  "positions": {},
+  "batch_count": 1,
+  "warnings": [
+    "Historic ticker universe and corporate actions may include survivorship/look-ahead bias",
+    "Minute OHLCV does not simulate live spreads, order queue or market impact",
+    "Signals use completed bars; executions only at next minute open",
+    "Participation based on 1% of PREVIOUS bar volume; fixed 5bp slip + $0.005/share",
+    "Rule logic evaluated every minute; thresholds altered only by observed outcomes"
+  ]
+}
