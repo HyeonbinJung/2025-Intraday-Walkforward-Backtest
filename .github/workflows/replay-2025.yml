@@ -1,0 +1,44 @@
+name: 2025 one-minute historical replay
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'requirements.txt'
+      - '.github/workflows/replay-2025.yml'
+permissions:
+  contents: write
+concurrency:
+  group: replay-2025
+  cancel-in-progress: false
+jobs:
+  replay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Replay all 2025 NYSE sessions
+        run: python src/backtest.py --out results/2025 2>&1 | tee /tmp/replay-log.txt
+      - name: Commit completed, auditable results
+        if: success()
+        run: |
+          python -c 'import json; x=json.load(open("results/2025/summary.json")); assert x["status"]=="COMPLETE" and x["market_sessions_processed"] >= 245'
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add results/2025
+          git diff --cached --quiet || (git commit -m 'Record audited 2025 replay results' && git push)
+      - name: Upload logs, even if incomplete
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: replay-2025-logs
+          path: |
+            /tmp/replay-log.txt
+            results/2025/
+          retention-days: 30
