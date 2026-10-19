@@ -1,0 +1,63 @@
+name: 2024-2025 medium term proxy backtest
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'experiments/medium_term_2024_2025/backtest.py'
+      - 'experiments/medium_term_2024_2025/requirements.txt'
+      - '.github/workflows/medium-term-2024-2025.yml'
+permissions:
+  contents: write
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install -r experiments/medium_term_2024_2025/requirements.txt
+      - name: Syntax check and strict-mode failure check
+        run: |
+          python -m py_compile experiments/medium_term_2024_2025/backtest.py
+          python - <<'PY'
+          from pathlib import Path
+          import sys
+          sys.path.insert(0,'experiments/medium_term_2024_2025')
+          from backtest import valuation
+          try:
+            valuation(Path('experiments/medium_term_2024_2025/input/valuation_pit.csv'),'full')
+          except ValueError:
+            print('Verified: full mode rejects missing historic valuations.')
+          else:
+            raise AssertionError('Full-mode passed without point-in-time valuations')
+          PY
+      - name: Run actual daily historical proxy
+        run: |
+          python -u experiments/medium_term_2024_2025/backtest.py --mode proxy
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('experiments/medium_term_2024_2025/results/proxy/summary.json')
+          d=json.loads(p.read_text())
+          assert d['status']=='COMPLETE' and d['mode']=='proxy' and d['days']>480
+          assert len(d['universe_by_year']['2024'])==100
+          assert len(d['universe_by_year']['2025'])==100
+          print('VERIFIED USD ending NAV',d['ending_equity'])
+          PY
+      - name: Persist independently labeled proxy results
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add experiments/medium_term_2024_2025/results/proxy
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish verified 2024-2025 medium-term price-proxy backtest'
+            git push origin HEAD:main
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: medium-term-2024-2025-proxy
+          path: experiments/medium_term_2024_2025/results/proxy/
