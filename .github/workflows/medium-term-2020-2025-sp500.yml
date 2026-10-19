@@ -1,0 +1,77 @@
+name: 2020-2025 medium term entire historical SP500
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'experiments/medium_term_2020_2025_sp500/backtest.py'
+      - 'experiments/medium_term_2020_2025_sp500/requirements.txt'
+      - '.github/workflows/medium-term-2020-2025-sp500.yml'
+permissions:
+  contents: write
+jobs:
+  six_years:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install packages
+        run: python -m pip install -r experiments/medium_term_2020_2025_sp500/requirements.txt
+      - name: Verify compilation and strict historical valuation mode
+        run: |
+          python -m py_compile experiments/medium_term_2020_2025_sp500/backtest.py
+          python - <<'PY'
+          from pathlib import Path
+          import sys
+          sys.path.insert(0,'experiments/medium_term_2020_2025_sp500')
+          from backtest import valuation
+          try:
+              valuation(Path('experiments/medium_term_2020_2025_sp500/input/valuation_pit.csv'),'full')
+          except ValueError:
+              print('PASS: strict full mode rejects absent historic valuation')
+          else:
+              raise AssertionError('Missing PIT fundamentals accepted')
+          PY
+      - name: Run both six year variants using market history
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -u experiments/medium_term_2020_2025_sp500/backtest.py --mode proxy --exit-mode original --out experiments/medium_term_2020_2025_sp500/results/original
+          python -u experiments/medium_term_2020_2025_sp500/backtest.py --mode proxy --exit-mode route_aware --out experiments/medium_term_2020_2025_sp500/results/route_aware
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          for v in ('original','route_aware'):
+              s=json.loads((Path('experiments/medium_term_2020_2025_sp500/results')/v/'summary.json').read_text())
+              assert s['status']=='COMPLETE' and s['mode']=='proxy' and s['exit_mode']==v
+              assert s['date_start']=='2020-01-02' and s['date_end']=='2025-12-31'
+              assert s['universe_method']=='ALL_POINT_IN_TIME_SP500_CONSTITUENTS_DAILY'
+              assert 1450 < s['days'] < 1550, s['days']
+              assert set(s['yearly']) == set(str(i) for i in range(2020,2026))
+              assert all(450 <= len(s['universe_by_year'][str(i)]) <= 510 for i in range(2020,2026))
+              print(v,'ending nav',s['ending_equity'],'nonexecuted merger settlements',s['synthetic_settlement_count'])
+          PY
+      - name: Commit verified historical outputs
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add experiments/medium_term_2020_2025_sp500/results/original experiments/medium_term_2020_2025_sp500/results/route_aware
+          if ! git diff --cached --quiet; then
+              git commit -m 'Commit verified six-year medium-term proxy backtests'
+              git pull --rebase origin main
+              git push origin HEAD:main
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: six-year-medium-term-backtest
+          path: |
+            experiments/medium_term_2020_2025_sp500/results/original
+            experiments/medium_term_2020_2025_sp500/results/route_aware
+          retention-days: 30
