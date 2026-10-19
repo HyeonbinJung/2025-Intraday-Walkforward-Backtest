@@ -24,7 +24,9 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Replay all 2025 NYSE sessions
-        run: python src/backtest.py --out results/2025 2>&1 | tee /tmp/replay-log.txt
+        run: |
+          set -o pipefail
+          python src/backtest.py --out results/2025 2>&1 | tee /tmp/replay-log.txt
       - name: Commit completed, auditable results
         if: success()
         run: |
