@@ -1,16 +1,41 @@
-# 2025H1 Monthly Equity Report
+# I-01 · Monthly equity and drawdown report
 
-Monthly values are the final NYSE trading session's end-of-day portfolio equity, reconstructed from all 13 committed `batches/*/daily_equity.csv` files. USD; returns are compounded from preceding month-end; January starts at $100,000. No external deposits/withdrawals.
+[← Intraday baseline](README.md) · [Project results](../../docs/RESULTS.md) · [Failure analysis](POSTMORTEM_AND_V2_PROMPT.md)
 
-| Month | Starting equity | Ending equity | Monthly P&L | Monthly return | Cumulative return |
-|---|---:|---:|---:|---:|---:|
-| 2025-01 | $100000.00 | $84128.81 | $-15871.19 | -15.87% | -15.87% |
-| 2025-02 | $84128.81 | $72644.46 | $-11484.35 | -13.65% | -27.36% |
-| 2025-03 | $72644.46 | $60018.22 | $-12626.24 | -17.38% | -39.98% |
-| 2025-04 | $60018.22 | $50804.77 | $-9213.45 | -15.35% | -49.20% |
-| 2025-05 | $50804.77 | $46388.53 | $-4416.24 | -8.69% | -53.61% |
-| 2025-06 | $46388.53 | $40809.57 | $-5578.96 | -12.03% | -59.19% |
+> [!IMPORTANT]
+> **COMPLETE:** 2025-01-01 → 2025-06-30, **122 NYSE sessions**, starting from **$100,000.00**. Simulated end balance **$40,809.57 (-59.19%)**. These are a synthetic historical account and not real broker fills.
 
-**Final equity:** $40,809.57; **net P&L:** -$59,190.43; **total return:** -59.19%. 122 NYSE sessions, 31,241 fills, estimated transaction costs $48,052.35. Historical simulated fills, not actual investment returns. Source universe may contain survivorship/corporate-action bias and cannot model live order-book execution.
+## Account trajectory · six month-ends
 
-Machine-readable version: [`monthly_equity.csv`](monthly_equity.csv).
+| Period | Start equity | End equity | Dollar P&L | Month return | Cumulative return |
+|:--|--:|--:|--:|--:|--:|
+| **Jan 2025** | $100,000.00 | $84,128.81 | -$15,871.19 | -15.87% | -15.87% |
+| **Feb 2025** | $84,128.81 | $72,644.46 | -$11,484.35 | -13.65% | -27.36% |
+| **Mar 2025** | $72,644.46 | $60,018.22 | -$12,626.24 | -17.38% | -39.98% |
+| **Apr 2025** | $60,018.22 | $50,804.77 | -$9,213.45 | -15.35% | -49.20% |
+| **May 2025** | $50,804.77 | $46,388.53 | -$4,416.24 | -8.69% | -53.61% |
+| **Jun 2025** | $46,388.53 | **$40,809.57** | -$5,578.96 | -12.03% | **-59.19%** |
+
+## Snapshot and execution accounting
+
+| Measure | Value |
+|:--|--:|
+| Opening NAV | $100,000.00 |
+| Closing NAV | **$40,809.57** |
+| Total hypothetical P&L | **-$59,190.43** |
+| Total return | **-59.19%** |
+| Completed historical batches | 13 |
+| Minutes with risk evaluation | 47,580 |
+| Fill records | 31,241 |
+| Modeled cumulative trading costs | $48,052.35 |
+
+The source's monthly values are reconstructed from the **last NYSE session's end-of-day account equity** in each committed batch, with no additional deposits or withdrawals. January starts at $100,000; later monthly returns use the preceding month's close and **compound**, rather than being arithmetically summed.
+
+## Provenance and limitations
+
+- [Machine summary](summary.json) is the source for completion, account value and cost estimates.
+- [Month-end CSV](monthly_equity.csv) is the machine-readable companion.
+- [Per-batch daily equity / trades / coverage](batches/) can be used to audit how each monthly row was reconstructed.
+- Bar-level historical input may contain survivorship and after-the-fact corporate-action information. Estimated next-minute fills and fixed execution costs cannot replicate order-book reality.
+
+[Read why this experiment failed →](POSTMORTEM_AND_V2_PROMPT.md)

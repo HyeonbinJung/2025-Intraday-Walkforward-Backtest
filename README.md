@@ -9,7 +9,7 @@
 [![Python](https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white)](requirements.txt)
 [![Research](https://img.shields.io/badge/Research-historical_simulation-334155)](docs/METHODOLOGY.md)
 [![Documentation](https://img.shields.io/badge/Docs-experiment_index-0F766E)](experiments/README.md)
-[![License](https://img.shields.io/badge/Use-research_only-7C3AED)](docs/DATA_QUALITY.md)
+[![Scope](https://img.shields.io/badge/Scope-research_only-7C3AED)](docs/DATA_QUALITY.md)
 
 [**Research overview**](docs/README.md) · [**Experiments**](experiments/README.md) · [**Results**](docs/RESULTS.md) · [**Methods**](docs/METHODOLOGY.md) · [**Caveats**](docs/DATA_QUALITY.md)
 
@@ -39,6 +39,8 @@ All accounts begin with **$100,000**. The equity figures below include hypotheti
 | **SPY buy and hold** | — | +130.14% | — | +130.14% |
 
 **Reading this correctly:** Original and route-aware are distinct *exit* rules; the route-aware version was revised after inspecting earlier data and is **not a blind out-of-sample result**. The "100" basket is a **historical dollar-volume proxy**, not the 100 largest companies by market capitalization. "All S&P 500" means scanning its roughly 500 contemporaneous constituents, **not holding 500 positions**.
+
+![2020–2025 final portfolio NAV comparison](assets/performance-comparison.svg)
 
 [View annual breakdown, win rates, MDD, and exact raw-file links →](docs/RESULTS.md)
 
