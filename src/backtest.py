@@ -44,6 +44,7 @@ class Engine:
         self.trades = []
         self.snapshots = []
         self.rules = []
+        self.minute_rules = []
         self.rule_events = []
         self.daily = []
         self.coverage = []
@@ -114,7 +115,8 @@ class Engine:
             pos["basis"] -= basis
             if pos["qty"] <= 0:
                 del self.positions[symbol]
-                self.realized(symbol, realized, when)
+            # Realized P&L is observable on EACH partial or full sell fill.
+            self.realized(symbol, realized, when)
         self.trades.append({"timestamp": when, "ticker": symbol, "side": side,
                             "shares": amount, "bar_open": round(op, 5),
                             "execution_price": round(price, 5), "fee": round(fee, 4),
@@ -163,6 +165,8 @@ class Engine:
         # A decision at 15:58 close exits at 15:59 open, not hindsight 15:59 close.
         flatten_signal_time = close_time - pd.Timedelta(minutes=2)
         observed = 0
+        # No stale prior-session minute volume is allowed at the new open.
+        self.previous_completed_volume = {}
         frame = self.score_trailing_bars(frame.drop_duplicates(["timestamp", "ticker"], keep="last"))
         for timestamp, group in frame.groupby("timestamp", sort=True):
             timestamp = pd.Timestamp(timestamp)
@@ -207,6 +211,15 @@ class Engine:
                             continue
                     next_orders[sym] = equity * self.risk
             self.pending.update(next_orders)
+            # Each observed minute has its own rule-state record, even if values do not change.
+            self.minute_rules.append({"timestamp": when, "date": date,
+                                      "risk": round(self.risk, 6),
+                                      "momentum_threshold": round(self.threshold, 6),
+                                      "loss_streak": self.loss_streak,
+                                      "winners": self.winners, "losers": self.losers,
+                                      "equity": round(self.equity(), 2),
+                                      "holdings": len(self.positions),
+                                      "pending_orders": len(self.pending)})
             eastern_time = timestamp.tz_convert("America/New_York")
             if eastern_time.minute % 10 == 0 or timestamp == close_time - pd.Timedelta(minutes=1):
                 self.snapshots.append({"timestamp": when, "date": date,
@@ -240,6 +253,9 @@ class Engine:
                   "fee", "realized_pnl", "cash_after"])
         csv_save(out / "equity_10min.csv", self.snapshots,
                  ["timestamp", "date", "equity", "cash", "holdings_json"])
+        csv_save(out / "rules_1min.csv", self.minute_rules,
+                 ["timestamp", "date", "risk", "momentum_threshold", "loss_streak",
+                  "winners", "losers", "equity", "holdings", "pending_orders"])
         csv_save(out / "rules_10min.csv", self.rules,
                  ["timestamp", "date", "risk", "momentum_threshold", "loss_streak", "winners", "losers"])
         csv_save(out / "rule_events.csv", self.rule_events,
