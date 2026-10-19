@@ -237,7 +237,7 @@ def run(args):
        "exit_mode":args.exit_mode,"synthetic_settlement_count":len(settlements),
        "synthetic_settlement_details":settlements,
        "universe_by_year":{str(y):sorted(g) for y,g in group.items()},
-       "rule_version":("v1_original" if args.exit_mode=="original" else "v1_1_posthoc_route_aware"),"warning":("Technical/price exploratory POST-HOC v1.1 test; NOT exact cap-top100, no valuation/news verification"
+       "rule_version":("v1_original" if args.exit_mode=="original" else "v1_1_posthoc_route_aware"),"warning":("Historical liquidity-top100 PROXY (NOT market-cap top100); valuation/news unverified; 2 possible non-executable corporate settlements"
                   if args.mode=="proxy" else "PIT inputs supplied; no contemporaneous news verification")}
     out=Path(args.out); out.mkdir(parents=True,exist_ok=True)
     df.to_csv(out/"equity_curve.csv")
