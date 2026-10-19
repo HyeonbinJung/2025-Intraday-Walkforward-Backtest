@@ -12,3 +12,20 @@ The first, pre-revision backtest and its analytics remain under results/proxy an
 v1.1 outputs use results/proxy_route_aware. Any difference between versions is **only a same-sample engineering comparison**. Real validation needs a fresh 2026-forward out-of-sample period or earlier training years, fixed splits and a truly point-in-time market-cap/valuation/news feed.
 
 No causal claim that 'reasonless' declines were identified.
+
+## Verified run outcomes (both 502 trading days)
+
+| Metric | v1 original frozen proxy | v1.1 route-aware, post-hoc |
+|---|---:|---:|
+| Ending account | $117,476.38 | **$117,083.67** |
+| Full-period return | +17.476% | **+17.084%** |
+| 2024 return | +19.805% | +20.028% |
+| 2025 return | -1.944% | -2.453% |
+| Maximum drawdown | -14.193% | -14.712% |
+| Closed round trips | 104 | 100 |
+| Win rate | 37.50% | 38.00% |
+| SPY cumulative return | +47.990% | +47.990% |
+
+The structural repair did **not** improve net historical account return; it underperformed v1 by 0.392 percentage points and SPY by 30.906 percentage points. It was *not* selected through return optimization. Six route-aware dip-reversal entries occurred (versus eight in v1); four exits were triggered by DIP_RECOVERED and closed at mean +7.63%. Those are a small in-sample set, not proof of a repeatable advantage.
+
+Source: GitHub Actions success for revision v1.1; raw files in results/proxy_route_aware. The unchanged first-pass data remain in results/proxy.
