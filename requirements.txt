@@ -1,0 +1,5 @@
+duckdb>=1.1,<2
+pandas>=2.2,<4
+pandas-market-calendars>=5,<7
+huggingface-hub>=0.26,<2
+numpy>=1.26,<3
