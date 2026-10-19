@@ -33,3 +33,9 @@ python experiments/medium_term_2020_2025_sp500/backtest.py --mode proxy --exit-m
 The GitHub Actions workflow `.github/workflows/medium-term-2020-2025-sp500.yml` runs both backtests, verifies **six full calendar years, all 500-ish constituents in prior-December snapshots, no 100-stock cap**, and commits reproducible `summary.md`, `summary.json`, `equity_curve.csv`, `monthly.csv`, `trades.csv` separately per exit variant.
 
 Compare with original 100-candidate results in `../medium_term_2020_2025/results/`. Both are historical simulations, **not** projections.
+
+## Verified six-year results
+
+The 500-constituent historical simulations **both completed successfully**. With $100,000 initial equity, the fixed original exit version ended at **$106,429.99** (+6.430%) and route-aware at **$124,601.04** (+24.601%). SPY gained +130.138% over the identical period; the original top-100 liquidity proxy yielded +24.373%, route-aware +24.008%. Both all-500 results include **eight synthetic non-tradable acquisition settlement assumptions**, requiring independent audit before treating the P&L as executable.
+
+See [RESULTS_COMPARISON.md](RESULTS_COMPARISON.md) for yearly figures, win rates, exit reasons, side-by-side 100-versus-500 comparisons, and flagged stock transactions. Raw outputs are in results/original and results/route_aware.
