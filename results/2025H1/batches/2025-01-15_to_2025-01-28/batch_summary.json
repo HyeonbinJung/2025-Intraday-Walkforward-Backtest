@@ -1,0 +1,12 @@
+{
+  "status": "COMPLETE_BATCH",
+  "start": "2025-01-15",
+  "end": "2025-01-28",
+  "sessions": 9,
+  "fills": 2498,
+  "minute_rule_checks": 3510,
+  "start_equity_usd": 92336.71,
+  "end_equity_usd": 87904.08,
+  "risk_at_end": 0.03,
+  "estimated_cumulative_trading_costs_usd": 13020.94
+}
