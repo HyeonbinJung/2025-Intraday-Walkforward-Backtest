@@ -34,6 +34,7 @@ class Engine:
         self.cash = START_CASH
         self.positions = {}
         self.last_price = {}
+        self.previous_completed_volume = {}
         self.pending = {}
         self.minute_n = 0
         self.loss_streak = 0
@@ -167,11 +168,12 @@ class Engine:
                 if symbol in current:
                     b = current[symbol]
                     self.execute(symbol, old_orders[symbol], float(b.open),
-                                 float(b.volume), when)
+                                 self.previous_completed_volume.get(symbol, 0.0), when)
                 elif symbol in self.positions:
                     self.pending[symbol] = 0.0  # no synthetic fill for missing candles
             for symbol, b in current.items():
                 self.last_price[symbol] = float(b.close)
+                self.previous_completed_volume[symbol] = float(b.volume)
                 history[symbol].append((timestamp, float(b.close), float(b.volume)))
                 if symbol in self.positions:
                     self.positions[symbol]["peak"] = max(self.positions[symbol]["peak"],
@@ -254,7 +256,7 @@ class Engine:
                    "notes": ["True 1-min decision cycle; next-minute open fills",
                              "Universe limited to source coverage, possible delisting bias",
                              "Third-party Finnhub-origin historic parquet, potentially ex-post adjusted",
-                             "Only 1 percent of each candle volume tradable",
+                             "Volume participation based on 1 percent of PREVIOUSLY observed minute volume",
                              "Slippage 5 bps each side and commission 0.005 USD per share"]}
         (out / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
 
