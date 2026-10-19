@@ -38,3 +38,13 @@ CI workflow: .github/workflows/medium-term-2024-2025.yml. It runs **real 2024–
 ## Data and limitations
 
 Prices and time-stamped S&P 500 membership: [Johnbrick123/sp500-data](https://github.com/Johnbrick123/sp500-data), release named data. The source author describes corporate-action corrections, a post-2025 data vintage, and verification caveats. Price fields from mixed vendors are turned into synthetic split/dividend-adjusted opens using daily adjusted close/raw close ratio. Data downloaded ~236MB initially. Historical trading status from no_trade_days.csv is blocked. Adjusted total return and synthetic share-unit calculations are an approximation; validate against independent split/dividend sources. Tax, market impact beyond 5bp, delisting settlements, share availability, earnings release blackout, full news causality and volatility/beta matching are not modeled. SPY is a simple buy/hold benchmark with no modeled commissions. Proxy performance cannot be reported as the full requested fundamental strategy.
+
+## Executed 2024-2025 runs
+
+| Version | Final marked NAV | 2024 | 2025 | Full-period | Status |
+|---|---:|---:|---:|---:|---|
+| Initial v1 price proxy | $117,476.38 | +19.805% | -1.944% | +17.476% | Successful, pre-revision |
+| v1.1 route-aware price proxy | $117,083.67 | +20.028% | -2.453% | +17.084% | Successful, **POST-HOC**, not held-out |
+| SPY benchmark | — | — | — | +47.990% | Buy and hold over matched interval |
+
+v1 results: results/proxy/summary.md. Route-aware results: results/proxy_route_aware/summary.md. Exit diagnostics: RESULTS_ANALYSIS.md; revision caveats: REVISION_V1_1.md. The repository's current backtest.py and workflow execute v1.1 by default; the v1 code remains retrievable at its earlier git commit. Neither price proxy is a completed historical market-cap top-100 / valuation / verified-no-news backtest.
