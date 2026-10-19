@@ -131,7 +131,8 @@ def run(args):
             pct=mark/h["entry"]-1
             reason=("MAX_FOUR_MONTHS" if date>=h["date"]+pd.DateOffset(months=4)
                 else "STOP_LOSS" if pct<=-.08 else "TRAILING_STOP" if mark/h["peak"]-1<=-.12
-                else "TREND_BROKEN" if pd.notna(ma50.at[prior,t]) and mark<.97*ma50.at[prior,t] and ret1.at[prior,t]<0
+                else "TREND_BROKEN" if h["route"]=="TREND" and pd.notna(ma50.at[prior,t]) and mark<.97*ma50.at[prior,t] and ret1.at[prior,t]<0
+                else "DIP_RECOVERED" if h["route"]=="DIP_REVERSAL" and pct>=.06 and pd.notna(ma20.at[prior,t]) and mark>=ma20.at[prior,t]
                 else "PROFIT_OVERBOUGHT" if pct>=.20 and rsi.at[prior,t]>72
                 else "SP500_REMOVED" if t not in snapshots[prior] else None)
             if reason:
@@ -175,7 +176,7 @@ def run(args):
             qty=alloc/(fill*(1+BPS/10000))
             fee=qty*fill*BPS/10000; cost=qty*fill+fee
             cash-=cost; used+=qty*fill
-            held[t]=dict(qty=qty,entry=fill,peak=fill,date=date,cost=cost,last=fill)
+            held[t]=dict(qty=qty,entry=fill,peak=fill,date=date,cost=cost,last=fill,route=reason)
             trades.append([date.date(),t,"BUY",fill,qty,fee,reason,np.nan])
         equity=cash
         for t,h in held.items():
@@ -207,7 +208,7 @@ def run(args):
        "win_rate_pct":round(100*sum(z>0 for z in closed)/len(closed),2) if closed else None,
        "remaining_positions":len(held),"yearly":yrs,"cost_bps_side":BPS,
        "universe_by_year":{str(y):sorted(g) for y,g in group.items()},
-       "warning":("Technical/price exploratory test; NOT exact cap-top100, no valuation/news verification"
+       "rule_version":"v1.1_route_aware_after_diagnostic","warning":("Technical/price exploratory POST-HOC v1.1 test; NOT exact cap-top100, no valuation/news verification"
                   if args.mode=="proxy" else "PIT inputs supplied; no contemporaneous news verification")}
     out=Path(args.out); out.mkdir(parents=True,exist_ok=True)
     df.to_csv(out/"equity_curve.csv")
