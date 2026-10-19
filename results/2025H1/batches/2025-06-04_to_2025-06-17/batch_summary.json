@@ -1,0 +1,12 @@
+{
+  "status": "COMPLETE_BATCH",
+  "start": "2025-06-04",
+  "end": "2025-06-17",
+  "sessions": 10,
+  "fills": 2085,
+  "minute_rule_checks": 3900,
+  "start_equity_usd": 46108.66,
+  "end_equity_usd": 43183.33,
+  "risk_at_end": 0.03,
+  "estimated_cumulative_trading_costs_usd": 46350.41
+}
