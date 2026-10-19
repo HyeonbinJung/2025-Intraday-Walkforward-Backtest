@@ -148,7 +148,7 @@ def run(args):
         cap=(.90 if risk_on else .60)*nav
         candidates=[]
         s5=ret5.at[prior,"SPY"]
-        for t in group[prior.year]&snapshots[prior]:
+        for t in group[date.year]&snapshots[prior]:
             if t not in p or t=="SPY" or (prior,t) in banned:continue
             values=[p.at[prior,t],ret5.at[prior,t],ma20.at[prior,t],ma50.at[prior,t],
                  ma200.at[prior,t],rsi.at[prior,t],max63.at[prior,t],adv.at[prior,t],sigma.at[prior,t]]
