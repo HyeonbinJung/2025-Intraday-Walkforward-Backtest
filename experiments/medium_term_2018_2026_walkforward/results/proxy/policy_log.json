@@ -1,0 +1,265 @@
+[
+  {
+    "effective_date": "2018-01-02",
+    "trained_through": "2017-12-29",
+    "event": "INITIAL_DEVELOPMENT",
+    "chosen_profile": "balanced",
+    "ranking": []
+  },
+  {
+    "effective_date": "2019-01-02",
+    "trained_through": "2018-12-31",
+    "event": "JANUARY_ANNUAL_REVIEW",
+    "chosen_profile": "balanced",
+    "ranking": [
+      {
+        "policy": "balanced",
+        "score": -0.00280476,
+        "trailing_return": 0.07238923,
+        "trailing_drawdown": -0.08200903
+      },
+      {
+        "policy": "reversal_bias",
+        "score": -0.02281059,
+        "trailing_return": 0.03032217,
+        "trailing_drawdown": -0.05882813
+      },
+      {
+        "policy": "defensive",
+        "score": -0.18367004,
+        "trailing_return": -0.05046029,
+        "trailing_drawdown": -0.15543793
+      },
+      {
+        "policy": "trend_bias",
+        "score": -0.20139038,
+        "trailing_return": -0.05384145,
+        "trailing_drawdown": -0.17251245
+      }
+    ]
+  },
+  {
+    "effective_date": "2019-07-01",
+    "trained_through": "2019-06-28",
+    "event": "2019H1_FORWARD_REVIEW",
+    "chosen_profile": "reversal_bias",
+    "ranking": [
+      {
+        "policy": "reversal_bias",
+        "score": -0.01951009,
+        "trailing_return": 0.03129992,
+        "trailing_drawdown": -0.05882813
+      },
+      {
+        "policy": "balanced",
+        "score": -0.11486792,
+        "trailing_return": 0.02595126,
+        "trailing_drawdown": -0.16129067
+      },
+      {
+        "policy": "defensive",
+        "score": -0.16122487,
+        "trailing_return": -0.02803542,
+        "trailing_drawdown": -0.15772625
+      },
+      {
+        "policy": "trend_bias",
+        "score": -0.52227681,
+        "trailing_return": -0.23022289,
+        "trailing_drawdown": -0.34834502
+      }
+    ]
+  },
+  {
+    "effective_date": "2020-01-02",
+    "trained_through": "2019-12-31",
+    "event": "JANUARY_ANNUAL_REVIEW",
+    "chosen_profile": "reversal_bias",
+    "ranking": [
+      {
+        "policy": "reversal_bias",
+        "score": -0.0113358,
+        "trailing_return": 0.04188867,
+        "trailing_drawdown": -0.05773151
+      },
+      {
+        "policy": "balanced",
+        "score": -0.22889708,
+        "trailing_return": -0.06671398,
+        "trailing_drawdown": -0.18537237
+      },
+      {
+        "policy": "defensive",
+        "score": -0.28818025,
+        "trailing_return": -0.13117584,
+        "trailing_drawdown": -0.18434561
+      },
+      {
+        "policy": "trend_bias",
+        "score": -0.46535157,
+        "trailing_return": -0.21583129,
+        "trailing_drawdown": -0.29212835
+      }
+    ]
+  },
+  {
+    "effective_date": "2021-01-04",
+    "trained_through": "2020-12-31",
+    "event": "JANUARY_ANNUAL_REVIEW",
+    "chosen_profile": "defensive",
+    "ranking": [
+      {
+        "policy": "defensive",
+        "score": -0.00513495,
+        "trailing_return": 0.08726293,
+        "trailing_drawdown": -0.10507076
+      },
+      {
+        "policy": "reversal_bias",
+        "score": -0.05716187,
+        "trailing_return": 0.05109123,
+        "trailing_drawdown": -0.12635267
+      },
+      {
+        "policy": "balanced",
+        "score": -0.10461776,
+        "trailing_return": 0.03929342,
+        "trailing_drawdown": -0.16548651
+      },
+      {
+        "policy": "trend_bias",
+        "score": -0.11330609,
+        "trailing_return": 0.01362847,
+        "trailing_drawdown": -0.14641397
+      }
+    ]
+  },
+  {
+    "effective_date": "2022-01-03",
+    "trained_through": "2021-12-31",
+    "event": "JANUARY_ANNUAL_REVIEW",
+    "chosen_profile": "reversal_bias",
+    "ranking": [
+      {
+        "policy": "reversal_bias",
+        "score": -0.01731503,
+        "trailing_return": 0.0544405,
+        "trailing_drawdown": -0.0812855
+      },
+      {
+        "policy": "defensive",
+        "score": -0.07519563,
+        "trailing_return": 0.01477042,
+        "trailing_drawdown": -0.10052767
+      },
+      {
+        "policy": "balanced",
+        "score": -0.12913394,
+        "trailing_return": -0.01148405,
+        "trailing_drawdown": -0.13074688
+      },
+      {
+        "policy": "trend_bias",
+        "score": -0.24419838,
+        "trailing_return": -0.08549371,
+        "trailing_drawdown": -0.18425606
+      }
+    ]
+  },
+  {
+    "effective_date": "2023-01-03",
+    "trained_through": "2022-12-30",
+    "event": "JANUARY_ANNUAL_REVIEW",
+    "chosen_profile": "reversal_bias",
+    "ranking": [
+      {
+        "policy": "reversal_bias",
+        "score": -0.11386341,
+        "trailing_return": -0.02505988,
+        "trailing_drawdown": -0.10214577
+      },
+      {
+        "policy": "trend_bias",
+        "score": -0.13337651,
+        "trailing_return": -0.03445807,
+        "trailing_drawdown": -0.11659812
+      },
+      {
+        "policy": "defensive",
+        "score": -0.15221968,
+        "trailing_return": -0.06733504,
+        "trailing_drawdown": -0.09965618
+      },
+      {
+        "policy": "balanced",
+        "score": -0.29160244,
+        "trailing_return": -0.13180784,
+        "trailing_drawdown": -0.19383493
+      }
+    ]
+  },
+  {
+    "effective_date": "2024-01-02",
+    "trained_through": "2023-12-29",
+    "event": "JANUARY_ANNUAL_REVIEW",
+    "chosen_profile": "reversal_bias",
+    "ranking": [
+      {
+        "policy": "reversal_bias",
+        "score": -0.02761664,
+        "trailing_return": 0.03503454,
+        "trailing_drawdown": -0.06835223
+      },
+      {
+        "policy": "defensive",
+        "score": -0.06892389,
+        "trailing_return": 0.00321114,
+        "trailing_drawdown": -0.08329661
+      },
+      {
+        "policy": "trend_bias",
+        "score": -0.15778587,
+        "trailing_return": -0.06143197,
+        "trailing_drawdown": -0.11375928
+      },
+      {
+        "policy": "balanced",
+        "score": -0.27418338,
+        "trailing_return": -0.11985458,
+        "trailing_drawdown": -0.18344909
+      }
+    ]
+  },
+  {
+    "effective_date": "2025-01-02",
+    "trained_through": "2024-12-31",
+    "event": "JANUARY_ANNUAL_REVIEW",
+    "chosen_profile": "reversal_bias",
+    "ranking": [
+      {
+        "policy": "reversal_bias",
+        "score": 0.00215054,
+        "trailing_return": 0.03941185,
+        "trailing_drawdown": -0.03849102
+      },
+      {
+        "policy": "defensive",
+        "score": -0.00030475,
+        "trailing_return": 0.05077007,
+        "trailing_drawdown": -0.05728174
+      },
+      {
+        "policy": "balanced",
+        "score": -0.03424689,
+        "trailing_return": 0.02625526,
+        "trailing_drawdown": -0.06757173
+      },
+      {
+        "policy": "trend_bias",
+        "score": -0.0358619,
+        "trailing_return": 0.03190097,
+        "trailing_drawdown": -0.07752186
+      }
+    ]
+  }
+]
