@@ -121,6 +121,8 @@ The adaptive portfolio trailed the fixed reversal policy by **20.59 percentage p
 
 Source: [Johnbrick123/sp500-data](https://github.com/Johnbrick123/sp500-data), publicly versioned prices and historical member snapshots (exact downloaded hashes recorded in JSON). Reconstructed historical members reduce but cannot eliminate survivorship/data-vintage bias. Adjusted prices can be restated; no independently verified corporate-action payouts. The strict fundamental/news mode is **not run** because the repository contains only schema headers for those inputs. Sector peers are not documented direct competitors. No claim of historic absence of material negative news is made.
 
+**Benchmark timing note:** SPY's cumulative comparator is anchored to the **2017-12-29 prior close** preceding the first 2018 strategy session, while the strategy's earliest new positions fill at the **2018-01-02 open**. It is a standard prior-close total-return reference, not a precisely matched open-to-open executable fill. This one-session difference is a minor additional comparison limitation.
+
 The **2018 development** period is in-sample. The subsequent replay respects chronological policy selection *inside the backtest*, but all profile definitions were devised in 2026 after the entire historic era. Therefore performance should not be advertised as an untouched OOS alpha validation.
 
 [← Specification](../README.md) · [← All results](../../../docs/RESULTS.md)
