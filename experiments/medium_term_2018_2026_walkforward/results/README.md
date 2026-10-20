@@ -68,6 +68,20 @@ Annual figures below are **one continuous account**, not independent $100,000 ye
 
 These are deterministic pre-scheduled selection points. Four fixed historical shadow strategies are compared on trailing equity history; the highest historical risk-adjusted score is used only for future entries.
 
+## Fixed-profile counterfactuals
+
+To test whether changing the entry policy added value, the same market history was also simulated using four **unchanging** profiles. These are different portfolios with their own capital and corporate-action exposures, **not** ex-ante recommendations.
+
+| Strategy | End NAV | Total return | Max drawdown | Unverified $0 write-offs |
+|:--|--:|--:|--:|--:|
+| Defensive, fixed | $75,163.10 | -24.84% | -33.38% | 7 |
+| Balanced, fixed | $76,633.03 | -23.37% | -35.78% | 10 |
+| Trend bias, fixed | $61,484.35 | -38.52% | -48.04% | 8 |
+| Reversal bias, fixed | **$119,808.65** | **+19.81%** | **-14.98%** | **0** |
+| **Adaptive switches** | $99,216.93 | -0.78% | -27.86% | 5 |
+
+The adaptive portfolio trailed the fixed reversal policy by **20.59 percentage points**, but that comparison **is not controlled for five versus zero non-executable write-offs**. It cannot prove that adaptation caused this gap. See the [full research diagnosis](../RESULTS_ANALYSIS.md) and [four fixed-profile equity histories](proxy/shadow_equity_curve.csv).
+
 ## Trade diagnostics
 
 | Diagnostic | Count or value |
@@ -97,6 +111,9 @@ These are deterministic pre-scheduled selection points. Four fixed historical sh
 | Daily equity, cash, positions and selected entry profile | [equity_curve.csv](proxy/equity_curve.csv) |
 | Annual NAV and matching benchmark returns | [yearly.csv](proxy/yearly.csv) |
 | Effective policy dates, prior training cutoff and shadow ranking | [policy_log.json](proxy/policy_log.json) |
+| Fixed-policy independent control accounts | [shadow_comparison.json](proxy/shadow_comparison.json) |
+| Daily NAV of each fixed-policy control | [shadow_equity_curve.csv](proxy/shadow_equity_curve.csv) |
+| Full diagnostic on revisions, write-offs and biases | [RESULTS_ANALYSIS.md](../RESULTS_ANALYSIS.md) |
 | Simulation implementation | [backtest.py](../backtest.py) |
 | Reproducibility workflow | [GitHub Actions](../../../.github/workflows/swing-2018-2026-walkforward.yml) |
 
