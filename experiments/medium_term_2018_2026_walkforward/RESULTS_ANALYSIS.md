@@ -79,6 +79,8 @@ Choosing the best risk-adjusted recent shadow policy can select a strategy immed
 5. **Sensitivity analysis:** costs, fill latency, max exposure, risk-adjusted SPY and cash benchmark, stock halts, gap/slippage, and sector concentration.
 6. **Compare equal conditions:** annual strategy returns, 2019H1 test and 2026 liquidation are different slices, not separately initialized portfolios.
 
+**Benchmark clock caution:** the SPY cumulative comparator begins from the close immediately preceding the first 2018 strategy session; portfolio entries begin at the following open. Recompute an open-aligned SPY execution benchmark before presenting precise relative investment profitability.
+
 ## 06 / Reproduction & audit references
 
 [Workflow](../../.github/workflows/swing-2018-2026-walkforward.yml) · [Trade and prior-signal audit](results/proxy/trades.csv) · [All daily NAVs](results/proxy/equity_curve.csv) · [Fixed-profile shadow NAVs](results/proxy/shadow_equity_curve.csv) · [Fixed-profile metrics](results/proxy/shadow_comparison.json) · [Dated profile selections](results/proxy/policy_log.json) · [Data manifests and checksums](results/proxy/summary.json)
