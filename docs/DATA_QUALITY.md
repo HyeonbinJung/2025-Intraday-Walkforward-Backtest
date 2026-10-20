@@ -12,6 +12,7 @@
 | One-minute intraday | Minute OHLCV, NYSE calendar | Jan–Jun 2025 | Third-party archive, may have missing symbols/survivorship, split-adjustment uncertainty |
 | Daily medium term | Historic S&P 500 snapshots and adjusted OHLCV | 2020–2025, 2024–2025 | Rebuilt/reconciled in 2026; adjusted price may be restated ex post |
 | Benchmarks | Dividend-adjusted SPY | Matched daily strategy dates | Not fee/beta/exposure matched; SPY comparison is buy-and-hold |
+| Adaptive six-month swing S-04 | Historic daily S&P 500 prices / membership; optional externally supplied dated fundamentals and news | 2018–June 2026 | Prices repaired retrospectively; default proxy validates NEITHER historic fundamentals/competitors NOR negative-news absence; zero-recovery writeoffs are non-executable |
 
 Source repositories: [mito0o852/OHLCV-1m](https://huggingface.co/datasets/mito0o852/OHLCV-1m) and [Johnbrick123/sp500-data](https://github.com/Johnbrick123/sp500-data). A data feed with point-in-time *index membership* is not automatically a point-in-time feed for *all fundamental estimates*.
 
