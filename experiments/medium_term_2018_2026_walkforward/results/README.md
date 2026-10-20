@@ -18,6 +18,8 @@
 | 2026 status | Liquidation only, **no buys**; terminal cash equals terminal NAV |
 | Fundamental / adverse-news candidate reviews | **0** (not checked by PROXY) |
 
+![Annual NAV comparison, S-04 and SPY](performance.svg)
+
 ## Headline metrics
 
 | Metric | Simulated strategy | Matched SPY |
