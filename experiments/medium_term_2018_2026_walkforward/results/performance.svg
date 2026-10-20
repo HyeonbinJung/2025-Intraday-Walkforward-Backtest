@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 570" role="img" aria-label="Backtested cumulative NAV comparison from a 100000 dollar initial account: S-04 approximately 99217 dollars; SPY approximately 318979 dollars through June 2026.">
+<rect width="1000" height="570" fill="#101b2a" rx="18"/>
+<text x="110" y="52" fill="#f3f7fc" font-family="Arial,sans-serif" font-size="26" font-weight="700">S-04  |  Sequential swing vs SPY</text>
+<text x="110" y="79" fill="#aec3d7" font-family="Arial,sans-serif" font-size="17">Annual NAV, $100k initial capital · 2018–June 2026</text>
+<g font-family="Arial,sans-serif"><line x1="110" y1="455" x2="950" y2="455" stroke="#243448" stroke-width="1"/><text x="92" y="460" text-anchor="end" fill="#9fb0c5" font-size="16">$0k</text>
+<line x1="110" y1="356.42857142857144" x2="950" y2="356.42857142857144" stroke="#243448" stroke-width="1"/><text x="92" y="361.42857142857144" text-anchor="end" fill="#9fb0c5" font-size="16">$100k</text>
+<line x1="110" y1="257.8571428571429" x2="950" y2="257.8571428571429" stroke="#243448" stroke-width="1"/><text x="92" y="262.8571428571429" text-anchor="end" fill="#9fb0c5" font-size="16">$200k</text>
+<line x1="110" y1="159.28571428571428" x2="950" y2="159.28571428571428" stroke="#243448" stroke-width="1"/><text x="92" y="164.28571428571428" text-anchor="end" fill="#9fb0c5" font-size="16">$300k</text><text x="110" y="484" text-anchor="middle" fill="#99a9bf" font-size="14">Start</text>
+<text x="203.33333333333331" y="484" text-anchor="middle" fill="#99a9bf" font-size="14">2018</text>
+<text x="296.66666666666663" y="484" text-anchor="middle" fill="#99a9bf" font-size="14">2019</text>
+<text x="390" y="484" text-anchor="middle" fill="#99a9bf" font-size="14">2020</text>
+<text x="483.3333333333333" y="484" text-anchor="middle" fill="#99a9bf" font-size="14">2021</text>
+<text x="576.6666666666667" y="484" text-anchor="middle" fill="#99a9bf" font-size="14">2022</text>
+<text x="670" y="484" text-anchor="middle" fill="#99a9bf" font-size="14">2023</text>
+<text x="763.3333333333334" y="484" text-anchor="middle" fill="#99a9bf" font-size="14">2024</text>
+<text x="856.6666666666666" y="484" text-anchor="middle" fill="#99a9bf" font-size="14">2025</text>
+<text x="950" y="484" text-anchor="middle" fill="#99a9bf" font-size="14">Jun 26</text></g>
+<path d="M110.0,356.4 L203.3,360.9 L296.7,331.5 L390.0,308.9 L483.3,266.9 L576.7,301.0 L670.0,260.7 L763.3,212.4 L856.7,169.4 L950.0,140.6" fill="none" stroke="#f9a54a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M110.0,356.4 L203.3,349.8 L296.7,362.4 L390.0,357.8 L483.3,359.7 L576.7,360.6 L670.0,357.2 L763.3,353.2 L856.7,362.4 L950.0,357.2" fill="none" stroke="#39c6be" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="203.33333333333331" cy="349.75799642857146" r="4" fill="#39c6be"/><circle cx="203.33333333333331" cy="360.92047142857143" r="4" fill="#f9a54a"/>
+<circle cx="296.66666666666663" cy="362.42962957142856" r="4" fill="#39c6be"/><circle cx="296.66666666666663" cy="331.546961018" r="4" fill="#f9a54a"/>
+<circle cx="390" cy="357.7591378571429" r="4" fill="#39c6be"/><circle cx="390" cy="308.8649341658372" r="4" fill="#f9a54a"/>
+<circle cx="483.3333333333333" cy="359.67679571428573" r="4" fill="#39c6be"/><circle cx="483.3333333333333" cy="266.8598708424654" r="4" fill="#f9a54a"/>
+<circle cx="576.6666666666667" cy="360.56168128571426" r="4" fill="#39c6be"/><circle cx="576.6666666666667" cy="301.04869511297255" r="4" fill="#f9a54a"/>
+<circle cx="670" cy="357.1698088571428" r="4" fill="#39c6be"/><circle cx="670" cy="260.730387876109" r="4" fill="#f9a54a"/>
+<circle cx="763.3333333333334" cy="353.1509334285714" r="4" fill="#39c6be"/><circle cx="763.3333333333334" cy="212.3863948990787" r="4" fill="#f9a54a"/>
+<circle cx="856.6666666666666" cy="362.3626207142857" r="4" fill="#39c6be"/><circle cx="856.6666666666666" cy="169.4073947554505" r="4" fill="#f9a54a"/>
+<circle cx="950" cy="357.2004547142857" r="4" fill="#39c6be"/><circle cx="950" cy="140.5825331081181" r="4" fill="#f9a54a"/>
+<g font-family="Arial,sans-serif" font-size="17"><line x1="110" y1="515" x2="148" y2="515" stroke="#39c6be" stroke-width="4"/><text x="159" y="521" fill="#e2eefc">S-04  -0.78%  ·  $99,217</text>
+<line x1="520" y1="515" x2="558" y2="515" stroke="#f9a54a" stroke-width="4"/><text x="569" y="521" fill="#e2eefc">SPY  +218.98%  ·  $318,979</text></g>
+<text x="110" y="552" fill="#a7b5c7" font-family="Arial,sans-serif" font-size="13">PROXY SIMULATION · 5 non-executable $0 recovery write-offs · not independently audited</text>
+</svg>
