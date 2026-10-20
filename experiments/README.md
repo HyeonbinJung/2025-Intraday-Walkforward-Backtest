@@ -17,7 +17,7 @@
 | **S-02** | [2020–2025 six-year extension](medium_term_2020_2025/README.md) | Prior-year **100 most liquid** members | 1,508 sessions | [Original](medium_term_2020_2025/results/original/README.md) / [Route-aware](medium_term_2020_2025/results/route_aware/README.md) |
 | **S-03** | [2020–2025 full-index expansion](medium_term_2020_2025_sp500/README.md) | **All contemporaneous** S&P 500 members | 1,508 sessions | [Original](medium_term_2020_2025_sp500/results/original/README.md) / [Route-aware](medium_term_2020_2025_sp500/results/route_aware/README.md) |
 
-| **S-04** | [2018–2026 adaptive six-month swing / liquidation](medium_term_2018_2026_walkforward/README.md) | All **contemporaneous** S&P 500 members | 2018 development → 2019H1 sequential → 2020–25 yearly → June 2026 exit | [Workflow-generated results](medium_term_2018_2026_walkforward/results/README.md) |
+| **S-04** | [2018–2026 adaptive six-month swing / liquidation](medium_term_2018_2026_walkforward/README.md) | All **contemporaneous** S&P 500 members | 2018 development → 2019H1 sequential → 2020–25 yearly → June 2026 exit | [**COMPLETE proxy**, 5 unverified write-offs](medium_term_2018_2026_walkforward/results/README.md) |
 
 ### Naming conventions
 
