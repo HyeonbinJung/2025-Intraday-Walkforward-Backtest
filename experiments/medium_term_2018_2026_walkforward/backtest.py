@@ -206,7 +206,7 @@ class PointInTimeGates:
         adverse = str(review["material_adverse"]).lower() in ("true", "1", "yes")
         if not verified or adverse or not str(review["source_url"]).startswith("http"):
             return False
-        end = pd.Timestamp(decision_date).tz_localize("UTC") + pd.Timedelta(days=1)
+        end = (pd.Timestamp(decision_date).tz_localize("America/New_York") + pd.Timedelta(hours=16)).tz_convert("UTC")
         if review["reviewed_at"] >= end or not str(row["source_url"]).startswith("http"):
             return False
         try:
