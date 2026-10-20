@@ -97,11 +97,13 @@ Annual S-04 NAV and return are on the **same continuous portfolio**, not separat
 | 2025 | -9.04% | +17.72% |
 | 2026H1 · liquidation only | +5.57% | +10.09% |
 
+**Fixed controls:** defensive -24.84%, balanced -23.37%, trend bias -38.52%, reversal bias +19.81%; the adaptive model returned -0.78%. These control accounts had **different numbers of zero-recovery corporate-action exceptions** (7, 10, 8, 0 versus the adaptive 5), so return rankings are not a validated causal test of annual policy switching.
+
 For **2019H1** alone, account return was **-3.52%**; **2019H2 -8.83%**. The **2020–2025 continuing account segment** returned approximately **+0.07%** (not a fresh $100,000 account). 2026's last recorded simulated SELL is February 17, after which the balance remained cash through June 30.
 
 ![S-04 and SPY annual historical NAV comparison](../experiments/medium_term_2018_2026_walkforward/results/performance.svg)
 
-[Complete S-04 report](../experiments/medium_term_2018_2026_walkforward/results/README.md) · [Source code](../experiments/medium_term_2018_2026_walkforward/backtest.py) · [Machine summary](../experiments/medium_term_2018_2026_walkforward/results/proxy/summary.json) · [Dated policy switches](../experiments/medium_term_2018_2026_walkforward/results/proxy/policy_log.json)
+[Complete S-04 report](../experiments/medium_term_2018_2026_walkforward/results/README.md) · [Fixed-profile comparison and failure analysis](../experiments/medium_term_2018_2026_walkforward/RESULTS_ANALYSIS.md) · [Source code](../experiments/medium_term_2018_2026_walkforward/backtest.py) · [Machine summary](../experiments/medium_term_2018_2026_walkforward/results/proxy/summary.json) · [Dated policy switches](../experiments/medium_term_2018_2026_walkforward/results/proxy/policy_log.json)
 
 ## Evidence trail
 
