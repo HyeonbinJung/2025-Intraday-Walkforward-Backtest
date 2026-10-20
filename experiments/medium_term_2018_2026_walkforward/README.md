@@ -49,7 +49,11 @@ Only **new entries** follow the selected profile; open holdings retain common ex
 
 ## 04 / Results
 
-The workflow deposits machine-readable data only upon a successful replay. Do not quote numerical returns before verifying the generated files:
+The verified GitHub Actions workflow finished the price-only proxy replay. **Starting $100,000 → ending $99,216.93 (-0.78%); SPY +218.98%. Five non-executable zero-recovery write-offs materially affect the outcome.** [Full audit report](results/README.md).
+
+![S-04 simulated strategy and SPY from 2018 through June 2026](results/performance.svg)
+
+Machine-readable sources and audit files:
 
 - [Full JSON summary](results/proxy/summary.json)
 - [Daily NAV ledger](results/proxy/equity_curve.csv)
