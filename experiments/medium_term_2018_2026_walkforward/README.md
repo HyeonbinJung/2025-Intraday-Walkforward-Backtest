@@ -62,6 +62,8 @@ Machine-readable sources and audit files:
 - [Dated policy revision log](results/proxy/policy_log.json)
 - [Automated runner](../../.github/workflows/swing-2018-2026-walkforward.yml)
 
+**Fixed-profile comparison:** the permanent reversal-bias profile earned **+19.81%** with zero non-executable write-offs, versus the policy-switching portfolio's **-0.78%** with five write-offs. The difference is confounded by event exposure and cannot identify a causal benefit from holding any profile. [Read the detailed postmortem](RESULTS_ANALYSIS.md).
+
 ## 05 / Interpretation
 
 The experiment is independent of S-01 through S-03 and does **not** overwrite their results. Compare only identical dates, capital, exposure, constituents and execution assumptions. The 2026 segment is liquidation-only and not a fresh 2026 entry test.
