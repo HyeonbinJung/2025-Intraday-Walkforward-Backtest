@@ -63,6 +63,46 @@ The dividend-adjusted **SPY buy-and-hold benchmark returned +130.14%** across th
 
 [100-stock experiment](../experiments/medium_term_2020_2025/README.md) · [Entire S&P 500 experiment](../experiments/medium_term_2020_2025_sp500/README.md) · [Direct comparison / exit analysis](../experiments/medium_term_2020_2025_sp500/RESULTS_COMPARISON.md)
 
+## 04 / Sequential 2018–June 2026 swing · adaptive six-month exit
+
+**Continuous $100,000 portfolio: 2018 model development, 2019H1 first forward-selected policy, 2019H2 review, 2020–2025 yearly policy reviews, 2026H1 liquidation only.** Historically active S&P 500 constituents, price-only technical signals and 6 bp per side.
+
+> [!CAUTION]
+> **COMPLETE PROXY, NOT A VERIFIED FUNDAMENTAL STRATEGY.** Historical financial valuation, direct competitor inputs, and verified absence of material adverse news are not available in the committed datasets. Five non-tradable events are booked as zero-recovery **non-executable** write-offs (roughly $37,079.68 of entry capital); true merger/corporate-action proceeds are unknown. 2018–2025 was already historical when the model family was designed.
+
+| Measure | S-04 sequential simulation | Matched SPY buy-and-hold |
+|:--|--:|--:|
+| Tested window | 2018-01-02 → 2026-06-30 | Same years |
+| Initial capital | $100,000.00 | Illustrative $100,000 |
+| Ending NAV | **$99,216.93** | Approx. $318,979 before benchmark trading costs |
+| Total return | **-0.78%** | **+218.98%** |
+| Maximum drawdown | -27.86% | Not calculated here |
+| Executed sales | 301 | — |
+| Realized win rate on executed sells | 52.82% | — |
+| Synthetic or assumed ordinary merger sales | **0** | — |
+| Non-executable zero-recovery write-offs | **5** | — |
+| 2026 purchases / positions at end | **0 / 0** | — |
+
+Annual S-04 NAV and return are on the **same continuous portfolio**, not separately restarted accounts:
+
+| Year | S-04 return | SPY return |
+|:--|--:|--:|
+| 2018 · development | +6.77% | -4.56% |
+| 2019 · 1H/H2 sequential selection | -12.04% | +31.22% |
+| 2020 | +5.05% | +18.37% |
+| 2021 | -1.97% | +28.74% |
+| 2022 | -0.93% | -18.17% |
+| 2023 | +3.59% | +26.19% |
+| 2024 | +4.11% | +24.89% |
+| 2025 | -9.04% | +17.72% |
+| 2026H1 · liquidation only | +5.57% | +10.09% |
+
+For **2019H1** alone, account return was **-3.52%**; **2019H2 -8.83%**. The **2020–2025 continuing account segment** returned approximately **+0.07%** (not a fresh $100,000 account). 2026's last recorded simulated SELL is February 17, after which the balance remained cash through June 30.
+
+![S-04 and SPY annual historical NAV comparison](../experiments/medium_term_2018_2026_walkforward/results/performance.svg)
+
+[Complete S-04 report](../experiments/medium_term_2018_2026_walkforward/results/README.md) · [Source code](../experiments/medium_term_2018_2026_walkforward/backtest.py) · [Machine summary](../experiments/medium_term_2018_2026_walkforward/results/proxy/summary.json) · [Dated policy switches](../experiments/medium_term_2018_2026_walkforward/results/proxy/policy_log.json)
+
 ## Evidence trail
 
 | What to inspect | Canonical path |
@@ -75,6 +115,7 @@ The dividend-adjusted **SPY buy-and-hold benchmark returned +130.14%** across th
 | S-02 route-aware | [2020–25 / route_aware / summary.json](../experiments/medium_term_2020_2025/results/route_aware/summary.json) |
 | S-03 original | [Full index / original / summary.json](../experiments/medium_term_2020_2025_sp500/results/original/summary.json) |
 | S-03 route-aware | [Full index / route_aware / summary.json](../experiments/medium_term_2020_2025_sp500/results/route_aware/summary.json) |
+| S-04 sequential 2018–2026 | [Sequential simulation / proxy / summary.json](../experiments/medium_term_2018_2026_walkforward/results/proxy/summary.json) |
 
 ## Interpretation boundaries
 
