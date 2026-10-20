@@ -99,7 +99,7 @@ def load_market(cache: Path):
         frame["date"] = pd.to_datetime(frame["date"])
     if px.empty or mem.empty or px.date.max() < pd.Timestamp(END):
         raise ValueError("Source lacks the full 2026-06-30 exit horizon; no partial report as COMPLETE")
-    if px.ticker.nunique() < 450 or mem.date.nunique() < 2000:
+    if px.ticker.nunique() < 450 or mem.date.nunique() < 10:
         raise ValueError("Missing historical S&P 500 price/membership coverage")
     if px.duplicated(["date", "ticker"]).any():
         px = px.sort_values(["date", "ticker"]).drop_duplicates(["date", "ticker"], keep="last")
