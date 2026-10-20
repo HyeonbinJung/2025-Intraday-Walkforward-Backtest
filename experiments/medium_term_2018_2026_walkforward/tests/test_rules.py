@@ -22,9 +22,9 @@ class HistoricalRulesTest(unittest.TestCase):
 
     def test_shadow_evaluation_ignores_data_outside_window(self):
         old = [{"equity": 100_000 + n * 500} for n in range(90)]
-        old_score = evaluate_shadow(old, 60)
-        self.assertEqual(old_score, evaluate_shadow(old[-60:], 60))
-        self.assertNotEqual(old_score, evaluate_shadow(old[:-1], 60))
+        old_score = evaluate_shadow(old, 65)
+        self.assertEqual(old_score, evaluate_shadow(old[-65:], 65))
+        self.assertNotEqual(old_score, evaluate_shadow(old[:-1], 65))
 
     def fixture(self, fill):
         dates = pd.to_datetime(["2025-12-29", "2025-12-30", "2025-12-31",
