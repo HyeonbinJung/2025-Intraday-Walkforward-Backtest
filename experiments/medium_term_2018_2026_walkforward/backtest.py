@@ -324,6 +324,7 @@ def step(state, date, prior, profile, picks, p, op, f, universe, banned, allow_b
                     "price": 0.0, "shares": lot["qty"], "fee": 0.0,
                     "reason": "NO_VERIFIABLE_OPEN_OR_CORPORATE_PAYOUT",
                     "profile": lot["profile"], "realized_return": -1.0,
+                    "signal_date": str(prior.date()), "signal_close": mark,
                 })
                 del held[ticker]
             continue
@@ -340,6 +341,7 @@ def step(state, date, prior, profile, picks, p, op, f, universe, banned, allow_b
             "date": str(date.date()), "ticker": ticker, "side": "SELL", "price": fill,
             "shares": lot["qty"], "fee": fee, "reason": reason,
             "profile": lot["profile"], "realized_return": realized,
+            "signal_date": str(prior.date()), "signal_close": mark,
         })
         del held[ticker]
 
@@ -350,7 +352,7 @@ def step(state, date, prior, profile, picks, p, op, f, universe, banned, allow_b
     risk_on = np.isfinite(spy_sma) and spy_close > spy_sma
     gross_cap = nav * (profile.risk_gross if risk_on else profile.weak_gross)
     if allow_buy:
-        for _, ticker, route in picks:
+        for signal_score, ticker, route in picks:
             if ticker in held or len(held) >= profile.max_positions:
                 continue
             if (date, ticker) in banned or ticker not in universe(prior):
@@ -376,6 +378,11 @@ def step(state, date, prior, profile, picks, p, op, f, universe, banned, allow_b
                 "date": str(date.date()), "ticker": ticker, "side": "BUY",
                 "price": float(fill), "shares": qty, "fee": fee,
                 "reason": route, "profile": profile.name, "realized_return": None,
+                "signal_date": str(prior.date()), "signal_close": float(p.at[prior, ticker]),
+                "signal_score": float(signal_score),
+                "signal_stock_5d": float(f["ret5"].at[prior, ticker]),
+                "signal_spy_5d": float(f["ret5"].at[prior, "SPY"]),
+                "signal_rsi14": float(f["rsi"].at[prior, ticker]),
             })
     nav_close = state["cash"]
     for ticker, lot in held.items():
@@ -502,6 +509,24 @@ def run(args):
             years.append(row)
     pd.DataFrame(years).to_csv(output / "yearly.csv", index=False)
     (output / "policy_log.json").write_text(json.dumps(policies, indent=2) + "\n")
+    shadow_summary = []
+    shadow_curves = pd.DataFrame({"date": [d.strftime("%Y-%m-%d") for d in days]})
+    for name, acc in shadows.items():
+        if len(acc["equity"]) != len(days):
+            raise AssertionError("Shadow portfolio chronology is incomplete")
+        vals = pd.Series([r["equity"] for r in acc["equity"]])
+        shadow_curves[name] = vals
+        shadow_summary.append({
+            "profile": name, "final_nav": round(float(vals.iloc[-1]), 2),
+            "total_return_pct": round(100 * (float(vals.iloc[-1]) / CAPITAL - 1), 3),
+            "max_drawdown_pct": round(100 * float((vals / vals.cummax() - 1).min()), 3),
+            "simulated_sells": sum(t["side"] == "SELL" for t in acc["trades"]),
+            "zero_recovery_writeoffs": acc["nonexec_writeoffs"],
+            "modelled_fees": round(acc["fees"], 2),
+        })
+    shadow_curves.to_csv(output / "shadow_equity_curve.csv", index=False)
+    (output / "shadow_comparison.json").write_text(
+        json.dumps(shadow_summary, indent=2) + "\n")
     daily = curve.equity.pct_change().dropna()
     final_nav = float(curve.equity.iloc[-1])
     n_sells = int((orders.side == "SELL").sum()) if not orders.empty else 0
@@ -528,7 +553,7 @@ def run(args):
         "total_fees_usd": round(primary["fees"], 2),
         "positions_remaining": len(primary["held"]),
         "terminal_cash_usd": round(primary["cash"], 2),
-        "years": years, "policy_log": policies,
+        "years": years, "policy_log": policies, "shadow_comparison": shadow_summary,
         "fundamental_reviews_checked": gates.checked, "fundamental_reviews_passed": gates.approved,
         "rules": {"max_months": HOLD_MONTHS, "take_profit_pct": 10,
                   "stop_loss_pct": -8, "trailing_stop_pct": -12,
