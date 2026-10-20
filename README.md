@@ -27,6 +27,7 @@
 | **Swing · 100 liquid names** | 2024–2025 | Daily bars, 100 historical liquidity leaders | **Complete** · 502 sessions | [Experiment](experiments/medium_term_2024_2025/README.md) |
 | **Swing · 100 liquid names** | 2020–2025 | Daily bars, 100 historical liquidity leaders | **Complete** · 1,508 sessions | [Experiment](experiments/medium_term_2020_2025/README.md) |
 | **Swing · full S&P 500** | 2020–2025 | Daily bars, all *then-current* index members | **Complete** · 1,508 sessions | [Experiment](experiments/medium_term_2020_2025_sp500/README.md) |
+| **Swing · adaptive six-month holding** | 2018–Jun 2026 | PIT member history, 2018 training + walk-forward policy + June 2026 exit | **Replay workflow** · price-only proxy | [S-04](experiments/medium_term_2018_2026_walkforward/README.md) |
 
 ### Six-year swing strategy — headline comparison
 
@@ -56,6 +57,7 @@ All accounts begin with **$100,000**. The equity figures below include hypotheti
 │   ├── medium_term_2024_2025/         # Daily; 2 years; liquidity-100
 │   ├── medium_term_2020_2025/         # Daily; 6 years; liquidity-100
 │   ├── medium_term_2020_2025_sp500/   # Daily; 6 years; dynamic S&P 500
+│   ├── medium_term_2018_2026_walkforward/ # Daily; development, sequential profiles, cash-out
 │   └── v2_2025H1/                     # Intraday lower-turnover replay engine
 ├── results/
 │   ├── README.md                       # Intraday results index
