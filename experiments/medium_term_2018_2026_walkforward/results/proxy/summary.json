@@ -415,6 +415,44 @@
       ]
     }
   ],
+  "shadow_comparison": [
+    {
+      "profile": "defensive",
+      "final_nav": 75163.1,
+      "total_return_pct": -24.837,
+      "max_drawdown_pct": -33.376,
+      "simulated_sells": 276,
+      "zero_recovery_writeoffs": 7,
+      "modelled_fees": 2616.03
+    },
+    {
+      "profile": "balanced",
+      "final_nav": 76633.03,
+      "total_return_pct": -23.367,
+      "max_drawdown_pct": -35.782,
+      "simulated_sells": 385,
+      "zero_recovery_writeoffs": 10,
+      "modelled_fees": 3643.5
+    },
+    {
+      "profile": "trend_bias",
+      "final_nav": 61484.35,
+      "total_return_pct": -38.516,
+      "max_drawdown_pct": -48.038,
+      "simulated_sells": 333,
+      "zero_recovery_writeoffs": 8,
+      "modelled_fees": 2577.53
+    },
+    {
+      "profile": "reversal_bias",
+      "final_nav": 119808.65,
+      "total_return_pct": 19.809,
+      "max_drawdown_pct": -14.979,
+      "simulated_sells": 269,
+      "zero_recovery_writeoffs": 0,
+      "modelled_fees": 3493.22
+    }
+  ],
   "fundamental_reviews_checked": 0,
   "fundamental_reviews_passed": 0,
   "rules": {
